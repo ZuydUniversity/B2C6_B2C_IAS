@@ -3,6 +3,9 @@ name: Run Ansible playbooks
 # Controls when the workflow will run
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   Create_VMs:
@@ -22,11 +25,6 @@ jobs:
           pip install ansible
           ansible-galaxy collection install azure.azcollection --force
 
-      - name: print files
-        run: |
-          sudo apt-get install tree
-          tree /home/runner/.ansible/collections/ansible_collections/azure/azcollection
-
       - name: Install Azure Collection requirements
         run: pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements.txt
 
@@ -36,6 +34,7 @@ jobs:
 
       - name: Maak VMs
         run: |
+          mkdir /home/runner/.ssh
           cd playbooks/
           ansible-playbook create_vms.yml
 
