@@ -35,7 +35,7 @@ jobs:
           sudo apt-get install tree
           tree /home/runner/.ansible/collections/ansible_collections/azure/azcollection
       - name: Install Azure Collection requirements
-        run: pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
+        run: pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements.txt
       - name: Run Ansible playbook
         run: ansible-playbook playbooks/test.yml        
 
