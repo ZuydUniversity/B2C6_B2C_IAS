@@ -46,6 +46,7 @@
         address_prefixes: 10.0.0.0/16
 
     - name: Create a subnet
+      register: output_subnet
       azure_rm_subnet:
         resource_group: "{{ resource_group_name }}"
         name: "{{ subnet_name}}"
@@ -91,7 +92,11 @@
         virtual_network: "{{ virtual_network_name}}"
         subnet: "{{ subnet_name}}"
         security_group: "{{ resource_group_name }}-VM-SecurityGroup"
-        public_ip_name: "{{ vm_base_name }}{{ vm_number }}-public-IP"
+        ip_configurations:
+          - name: ipconfig1
+            public_ip_address_name: "{{ vm_base_name }}{{ vm_number }}-public-IP"
+            subnet:
+              id: "{{ output_subnet.state.id }}"
 
     - name: Create multiple virtual machines
       loop: "{{ range(1, number_of_vms + 1) | list }}"
