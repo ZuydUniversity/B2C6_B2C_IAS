@@ -1,0 +1,11 @@
+# Deze horen niet aangepast te worden
+number_of_vms: 1
+vm_base_name: GithubAnsibleVM
+location: westeurope
+resource_group_name: B2C6C
+virtual_network_name: "{{ resource_group_name }}-vnet"
+subnet_name: "vm-subnet"
+admin_username: b2c6c
+key_path: "~/.ssh/"
+key_name: "ansible_key.pem"
+dns_zone: klasb2c # dnszone.westeurope.cloudapp.azure.com
