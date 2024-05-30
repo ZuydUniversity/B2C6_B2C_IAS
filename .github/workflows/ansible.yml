@@ -31,5 +31,7 @@ jobs:
         run: pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements.txt
 
       - name: Maak VMs
-        run: ansible-playbook playbooks/create_vms.yml
+        run: |
+          cd playbooks/
+          ansible-playbook create_vms.yml
 
