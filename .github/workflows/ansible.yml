@@ -29,11 +29,11 @@ jobs:
       - name: Install Ansible
         run: pip install ansible
       - name: Install Azure Collection  
-        run: ansible-galaxy collection install azure.azcollection 
+        run: ansible-galaxy collection install azure.azcollection --force
       - name: print files
         run: |
           sudo apt-get install tree
-          tree /
+          tree ~/
       - name: Install Azure Collection requirements
         run: pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
       - name: Run Ansible playbook
