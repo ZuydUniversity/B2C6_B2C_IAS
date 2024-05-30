@@ -30,6 +30,10 @@ jobs:
       - name: Install Azure Collection requirements
         run: pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements.txt
 
+      - name: Configure Azure credentials
+        run: |
+          az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+
       - name: Maak VMs
         run: |
           cd playbooks/
