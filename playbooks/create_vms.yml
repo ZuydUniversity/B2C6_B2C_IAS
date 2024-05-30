@@ -95,8 +95,6 @@
         ip_configurations:
           - name: ipconfig1
             public_ip_address_name: "{{ vm_base_name }}{{ vm_number }}-public-IP"
-            subnet:
-              id: "{{ output_subnet.state.id }}"
 
     - name: Create multiple virtual machines
       loop: "{{ range(1, number_of_vms + 1) | list }}"
