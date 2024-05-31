@@ -34,7 +34,7 @@ jobs:
       - name: Make SSH directory
         run: mkdir /home/runner/.ssh
 
-      - name: Maak VMs
+      - name: make VMs
         working-directory: ./playbooks
         run: ansible-playbook create_vms.yml
 
@@ -45,7 +45,7 @@ jobs:
           path: "~/.ssh/ansible_key.pem"
           retention-days: 1
 
-      - name: Configureer VMs
+      - name: Configure VMs
         working-directory: ./playbooks
         run: ansible-playbook -vvv configure_vms.yml
 
