@@ -29,13 +29,22 @@ jobs:
         run: pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements.txt
 
       - name: Configure Azure credentials
-        run: |
-          az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+        run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Make SSH directory
+        run: mkdir /home/runner/.ssh
 
       - name: Maak VMs
-        run: |
-          mkdir /home/runner/.ssh
-          cd playbooks/
-          ansible-playbook create_vms.yml
-          ansible-playbook configure_vms.yml
+        working-directory: ./playbooks
+        run: ansible-playbook create_vms.yml
+
+      - name: Export SSH key
+        uses: actions/upload-artifact@v4
+        with:
+          name: privatekey.pem
+          path: "~/.ssh/ansible_key.pem"
+          retention-days: 1
+
+      - name: Configureer VMs
+        run: ansible-playbook -vvv configure_vms.yml
 
