@@ -46,5 +46,6 @@ jobs:
           retention-days: 1
 
       - name: Configureer VMs
+        working-directory: ./playbooks
         run: ansible-playbook -vvv configure_vms.yml
 
