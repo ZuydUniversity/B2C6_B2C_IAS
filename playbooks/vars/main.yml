@@ -1,6 +1,6 @@
 # Deze horen niet aangepast te worden
 number_of_vms: 1
-vm_base_name: GithubAnsibleVM
+vm_base_name: DockerComposeVM
 location: westeurope
 resource_group_name: B2C6C
 virtual_network_name: "{{ resource_group_name }}-vnet"
