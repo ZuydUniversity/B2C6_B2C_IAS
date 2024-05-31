@@ -34,7 +34,7 @@ jobs:
       - name: Make SSH directory
         run: mkdir /home/runner/.ssh
 
-      - name: make VMs
+      - name: Make VMs
         working-directory: ./playbooks
         run: ansible-playbook create_vms.yml
 

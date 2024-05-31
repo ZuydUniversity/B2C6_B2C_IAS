@@ -22,18 +22,6 @@
       set_fact:
         public_key_content: "{{ lookup('file', '{{ key_path }}{{key_name}}.pub') }}"
 
-    - name: Print public key
-      debug:
-        msg: "Generated public key: {{ public_key_content }}"
-
-    - name: Read the contents of the private key
-      set_fact:
-        private_key_content: "{{ lookup('file', '{{ key_path }}{{key_name}}') }}"
-
-    - name: Print private key
-      debug:
-        msg: "Generated private key: {{ private_key_content }}"
-
     - name: Create a resource group
       azure_rm_resourcegroup:
         name: "{{ resource_group_name }}"
