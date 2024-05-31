@@ -37,4 +37,5 @@ jobs:
           mkdir /home/runner/.ssh
           cd playbooks/
           ansible-playbook create_vms.yml
+          ansible-playbook configure_vms.yml
 

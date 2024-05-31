@@ -4,8 +4,14 @@
   tasks:
     - name: Install Docker
       apt:
-        name: docker.io
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
         state: present
         update_cache: yes
 
- # TODO verder configureren
+    - name: Test Docker
+      ansible.builtin.command: docker run hello-world
