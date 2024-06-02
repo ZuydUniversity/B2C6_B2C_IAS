@@ -1,6 +1,8 @@
 - name: Configure VMs
   hosts: all
   become: yes
+  ignore_unreachable: yes
+
   tasks:
     - name: Update packages list
       apt:
