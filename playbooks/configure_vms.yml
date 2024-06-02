@@ -17,13 +17,13 @@
       file:
         path: /etc/apt/keyrings
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: Download Docker's official GPG key
       get_url:
         url: https://download.docker.com/linux/ubuntu/gpg
         dest: /etc/apt/keyrings/docker.asc
-        mode: '0644'
+        mode: "0644"
 
     - name: Add Docker repository to Apt sources
       shell: |
@@ -44,5 +44,48 @@
         state: present
         update_cache: yes
 
-    - name: Test Docker with hello-world image
-      ansible.builtin.command: docker run hello-world
+    - name: Ensure Docker is running
+      service:
+        name: docker
+        state: started
+
+    - name: Create Compose file
+      copy:
+        content: |
+          # docker-compose.yml
+          name: ansible-compose-stack
+          services:
+            frontend:
+              image: casolischlager/frontendtest:latest
+              restart: always
+              ports:
+                - 80:5000
+            backend:
+              image: ichishihoness/my-backend:latest
+              restart: always
+              ports: 
+                - 8000:8000
+              links:
+                - db
+              environment:
+                DB_USER: "{{ DB_USER }}"
+                DB_PASSWORD: "{{ DB_PASSWORD }}"
+                DB_HOST: db
+                DB_NAME: "{{ DOCKER_DB_NAME }}"
+
+            db:
+              image: mariadb:latest
+              restart: always
+              environment:
+                MYSQL_ROOT_PASSWORD: "{{ DOCKER_DB_PASSWORD }}"
+              volumes:
+                - db_data:/var/lib/mysql
+              ports:
+                - 3306:3306
+
+          volumes:
+            db_data:
+        dest: ~/Dockerfile
+
+    - name: Launch Docker Compose
+      ansible.builtin.command: docker compose -f ~/Dockerfile up --detach
