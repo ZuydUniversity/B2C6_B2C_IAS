@@ -71,13 +71,13 @@
                 DB_USER: "{{ DB_USER }}"
                 DB_PASSWORD: "{{ DB_PASSWORD }}"
                 DB_HOST: db
-                DB_NAME: "{{ DOCKER_DB_NAME }}"
+                DB_NAME: "{{ DB_NAME }}"
 
             db:
               image: mariadb:latest
               restart: always
               environment:
-                MYSQL_ROOT_PASSWORD: "{{ DOCKER_DB_PASSWORD }}"
+                MYSQL_ROOT_PASSWORD: "{{ DB_PASSWORD }}"
               volumes:
                 - db_data:/var/lib/mysql
               ports:
