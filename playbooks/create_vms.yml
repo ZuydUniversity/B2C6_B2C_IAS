@@ -73,7 +73,7 @@
             protocol: Tcp
             destination_port_range: 80
             access: Allow
-            priority: 1003
+            priority: 1001
             direction: Inbound
           - name: Backend
             protocol: Tcp
@@ -85,7 +85,7 @@
             protocol: Tcp
             destination_port_range: 3306
             access: Allow
-            priority: 1001
+            priority: 1003
             direction: Inbound
 
     - name: Create network interfaces
