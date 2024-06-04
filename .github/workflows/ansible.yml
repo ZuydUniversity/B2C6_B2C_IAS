@@ -2,6 +2,17 @@ name: Run Ansible playbooks
 
 on:
   workflow_dispatch:
+    inputs:
+      numberOfDevelopmentVms:
+        description: 'Number of testing environment VMs to create'
+        required: true
+        default: 1
+        type: number
+      numberOfProductionVms:
+        description: 'Number of production environment VMs to create'
+        required: true
+        default: 1
+        type: number
 
 jobs:
   Create_VMs:
@@ -30,16 +41,9 @@ jobs:
       - name: Make SSH directory
         run: mkdir /home/runner/.ssh
 
-      - name: Make VMs
+      - name: Create VMs
         working-directory: ./playbooks
-        run: ansible-playbook create_vms.yml
-
-      # - name: Export SSH key
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: privatekey.pem
-      #     path: "~/.ssh/ansible_key.pem"
-      #     retention-days: 1
+        run: ansible-playbook create_vms.yml -e DEVELOPMENT_VMS=${{ github.event.inputs.numberOfDevelopmentVms }} -e PRODUCTION_VMS=${{ github.event.inputs.numberOfProductionVms }}
 
       - name: Configure VMs
         working-directory: ./playbooks
@@ -48,3 +52,10 @@ jobs:
           DOCKER_DB_PASSWORD: ${{ secrets.DOCKER_DB_PASSWORD }}
           DOCKER_DB_NAME: ${{ secrets.DOCKER_DB_NAME }}
         run: ansible-playbook configure_vms.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME"
+
+      - name: Export SSH key
+        uses: actions/upload-artifact@v4
+        with:
+          name: privatekey.pem
+          path: "~/.ssh/ansible_key.pem"
+          retention-days: 1
