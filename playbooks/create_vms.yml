@@ -79,7 +79,7 @@
     - vars/main.yml
   tasks:
     - name: Create public IP addresses
-      loop: "{{ range(1, number_of_vms + 1) | list }}"
+      loop: "{{ range(1, (number_of_vms | int) + 1) | list }}"
       loop_control:
         loop_var: vm_number
       register: output_ip_addresses
@@ -91,7 +91,7 @@
         domain_name_label: "{{ vm_type | lower }}VM{{ vm_number }}-klasb2c"
 
     - name: Create network interfaces
-      loop: "{{ range(1, number_of_vms + 1) | list }}"
+      loop: "{{ range(1, (number_of_vms | int) + 1) | list }}"
       loop_control:
         loop_var: vm_number
       azure_rm_networkinterface:
@@ -105,7 +105,7 @@
             public_ip_address_name: "{{ vm_type }}VM{{ vm_number }}_public_IP"
 
     - name: Create virtual machines
-      loop: "{{ range(1, number_of_vms + 1) | list }}"
+      loop: "{{ range(1, (number_of_vms | int) + 1) | list }}"
       loop_control:
         loop_var: vm_number
       azure_rm_virtualmachine:
@@ -140,7 +140,7 @@
     - vars/main.yml
   tasks:
     - name: Create public IP addresses
-      loop: "{{ range(1, number_of_vms + 1) | list }}"
+      loop: "{{ range(1, (number_of_vms | int) + 1) | list }}"
       loop_control:
         loop_var: vm_number
       register: output_ip_addresses
@@ -152,7 +152,7 @@
         domain_name_label: "{{ vm_type | lower }}VM{{ vm_number }}-klasb2c"
 
     - name: Create network interfaces
-      loop: "{{ range(1, number_of_vms + 1) | list }}"
+      loop: "{{ range(1, (number_of_vms | int) + 1) | list }}"
       loop_control:
         loop_var: vm_number
       azure_rm_networkinterface:
@@ -166,7 +166,7 @@
             public_ip_address_name: "{{ vm_type }}VM{{ vm_number }}_public_IP"
 
     - name: Create virtual machines
-      loop: "{{ range(1, number_of_vms + 1) | list }}"
+      loop: "{{ range(1, (number_of_vms | int) + 1) | list }}"
       loop_control:
         loop_var: vm_number
       azure_rm_virtualmachine:
