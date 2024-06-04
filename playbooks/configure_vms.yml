@@ -1,8 +1,7 @@
-- name: Configure VMs
+- name: Install packages
   hosts: all
   become: yes
   ignore_unreachable: yes
-
   tasks:
     - name: Update packages list
       apt:
@@ -46,11 +45,67 @@
         state: present
         update_cache: yes
 
+- name: Configure Development VMs
+  hosts: development
+  become: yes
+  tasks:
     - name: Ensure Docker is running
       service:
         name: docker
         state: started
 
+    # TODO edit images
+    - name: Create Compose file
+      copy:
+        content: |
+          # docker-compose.yml
+          name: ansible-compose-stack
+          services:
+            frontend:
+              image: casolischlager/frontendtest:latest
+              restart: always
+              ports:
+                - 80:5000
+            backend:
+              image: ichishihoness/my-backend:latest
+              restart: always
+              ports: 
+                - 8000:8000
+              links:
+                - db
+              environment:
+                DB_USER: "{{ DB_USER }}"
+                DB_PASSWORD: "{{ DB_PASSWORD }}"
+                DB_HOST: db
+                DB_NAME: "{{ DB_NAME }}"
+
+            db:
+              image: mariadb:latest
+              restart: always
+              environment:
+                MYSQL_ROOT_PASSWORD: "{{ DB_PASSWORD }}"
+              volumes:
+                - db_data:/var/lib/mysql
+              ports:
+                - 3306:3306
+
+          volumes:
+            db_data:
+        dest: ~/Dockerfile
+
+    - name: Launch Docker Compose
+      ansible.builtin.command: docker compose -f ~/Dockerfile up --detach
+
+- name: Configure Production VMs
+  hosts: production
+  become: yes
+  tasks:
+    - name: Ensure Docker is running
+      service:
+        name: docker
+        state: started
+
+    # TODO edit images
     - name: Create Compose file
       copy:
         content: |
