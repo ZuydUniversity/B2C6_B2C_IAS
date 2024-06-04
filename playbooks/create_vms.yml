@@ -73,7 +73,7 @@
   collections:
     - azure.azcollection
   vars:
-    number_of_vms: "{{ DEVELOPMENT_VMS }}"
+    number_of_vms: "{{ DEVELOPMENT_VMS | int }}"
     vm_type: Development
   vars_files:
     - vars/main.yml
@@ -134,7 +134,7 @@
   collections:
     - azure.azcollection
   vars:
-    number_of_vms: "{{ PRODUCTION_VMS }}"
+    number_of_vms: "{{ PRODUCTION_VMS | int }}"
     vm_type: Production
   vars_files:
     - vars/main.yml
