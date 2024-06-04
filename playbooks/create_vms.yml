@@ -22,18 +22,6 @@
       set_fact:
         public_key_content: "{{ lookup('file', '{{ key_path }}{{key_name}}.pub') }}"
 
-    - name: Print public key
-      debug:
-        msg: "Generated public key: {{ public_key_content }}"
-
-    - name: Read the contents of the private key
-      set_fact:
-        private_key_content: "{{ lookup('file', '{{ key_path }}{{key_name}}') }}"
-
-    - name: Print private key
-      debug:
-        msg: "Generated private key: {{ private_key_content }}"
-
     - name: Create a resource group
       azure_rm_resourcegroup:
         name: "{{ resource_group_name }}"
@@ -70,16 +58,34 @@
       debug:
         msg: "Generated IP address: {{ item.state.ip_address }}"
 
-    - name: Create Network Security Group that allows SSH
+    - name: Create Network Security Group
       azure_rm_securitygroup:
         resource_group: "{{ resource_group_name }}"
         name: "{{ resource_group_name }}-VM-SecurityGroup"
-        rules: # TODO add specific ports for each service
+        rules:
           - name: SSH
             protocol: Tcp
             destination_port_range: 22
             access: Allow
+            priority: 2001
+            direction: Inbound
+          - name: HTTP
+            protocol: Tcp
+            destination_port_range: 80
+            access: Allow
             priority: 1001
+            direction: Inbound
+          - name: Backend
+            protocol: Tcp
+            destination_port_range: 8000
+            access: Allow
+            priority: 1002
+            direction: Inbound
+          - name: Database
+            protocol: Tcp
+            destination_port_range: 3306
+            access: Allow
+            priority: 1003
             direction: Inbound
 
     - name: Create network interfaces
