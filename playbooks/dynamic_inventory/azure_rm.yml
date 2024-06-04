@@ -3,7 +3,5 @@ include_vm_resource_groups:
   - b2c6c
 auth_source: auto
 conditional_groups:
-  linux: "'Ubuntu' in image.offer"
-keyed_groups:
-  - key: tags
-    separator: ''
+  development: "'development' in tags.environment | default('none')"
+  production: "'production' in tags.environment | default('none')"
