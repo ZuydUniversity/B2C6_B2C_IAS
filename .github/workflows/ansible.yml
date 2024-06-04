@@ -2,9 +2,6 @@ name: Run Ansible playbooks
 
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - main
 
 jobs:
   Create_VMs:
