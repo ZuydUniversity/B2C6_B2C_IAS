@@ -46,7 +46,7 @@
         update_cache: yes
 
 - name: Configure Development VMs
-  hosts: development
+  hosts: environmentdevelopment
   become: yes
   tasks:
     - name: Ensure Docker is running
@@ -96,7 +96,7 @@
       ansible.builtin.command: docker compose -f ~/Dockerfile up --detach
 
 - name: Configure Production VMs
-  hosts: production
+  hosts: environmentproduction
   become: yes
   tasks:
     - name: Ensure Docker is running

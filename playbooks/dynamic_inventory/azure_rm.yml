@@ -2,5 +2,8 @@ plugin: azure_rm
 include_vm_resource_groups:
   - b2c6c
 auth_source: auto
+conditional_groups:
+  linux: "'Ubuntu' in image.offer"
 keyed_groups:
-  - key: tags.environment
+  - key: tags
+    separator: ''
