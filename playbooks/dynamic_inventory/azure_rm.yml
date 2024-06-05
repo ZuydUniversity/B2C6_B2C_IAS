@@ -2,6 +2,6 @@ plugin: azure_rm
 include_vm_resource_groups:
   - b2c6c
 auth_source: auto
-keyed_groups:
-  - prefix: environment
-    key: tags['environment']
+conditional_groups:
+  development: "'development' in tags.environment | default('none')"
+  production: "'production' in tags.environment | default('none')"
