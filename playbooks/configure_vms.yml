@@ -47,6 +47,7 @@
 
 - name: Configure Development VMs
   hosts: development
+  become: yes
   tasks:
     - name: Ensure Docker is running
       service:
@@ -96,6 +97,7 @@
 
 - name: Configure Production VMs
   hosts: production
+  become: yes
   tasks:
     - name: Ensure Docker is running
       service:
