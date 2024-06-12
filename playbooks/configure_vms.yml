@@ -88,6 +88,13 @@
               ports:
                 - 3306:3306
 
+            watchtower:
+              image: containerrr/watchtower
+              restart: always
+              volumes:
+                - /var/run/docker.sock:/var/run/docker.sock
+              command: --cleanup --interval 300
+
           volumes:
             db_data:
         dest: /tmp/dockercompose-file
@@ -137,6 +144,13 @@
                 - db_data:/var/lib/mysql
               ports:
                 - 3306:3306
+
+            watchtower:
+              image: containerrr/watchtower
+              restart: always
+              volumes:
+                - /var/run/docker.sock:/var/run/docker.sock
+              command: --cleanup --interval 300
 
           volumes:
             db_data:
