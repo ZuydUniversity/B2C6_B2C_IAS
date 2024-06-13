@@ -89,7 +89,7 @@
                 - 3306:3306
 
             watchtower:
-              image: containerrr/watchtower
+              image: containrrr/watchtower
               restart: always
               volumes:
                 - /var/run/docker.sock:/var/run/docker.sock
@@ -146,7 +146,7 @@
                 - 3306:3306
 
             watchtower:
-              image: containerrr/watchtower
+              image: containrrr/watchtower
               restart: always
               volumes:
                 - /var/run/docker.sock:/var/run/docker.sock
