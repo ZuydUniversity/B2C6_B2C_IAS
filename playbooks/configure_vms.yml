@@ -314,7 +314,7 @@
         dest: /home/vault/api-user-policy.hcl
         content: |
           path "kv/*" {
-            capabilities = ["read"]
+            capabilities = ["create", "read"]
           }
 
           path "auth/userpass/login/*" {
