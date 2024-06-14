@@ -198,6 +198,7 @@
 
 - name: Setup Vault Service
   hosts: vault
+  remote_user: vault
   become: yes
   environment:
     VAULT_ADDR: 'http://127.0.0.1:8200'
