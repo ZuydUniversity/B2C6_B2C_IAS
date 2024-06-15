@@ -53,6 +53,14 @@ jobs:
           DOCKER_DB_NAME: ${{ secrets.DOCKER_DB_NAME }}
         run: ansible-playbook configure_vms.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME"
 
+      - name: Create storage blob
+        working-directory: ./playbooks
+        run: ansible-playbook create_storage_blob.yml
+
+      - name: Setup openscap
+        working-directory: ./playbooks
+        run: ansible-playbook setup_openscap.yml
+
       - name: Export SSH key
         uses: actions/upload-artifact@v4
         with:

@@ -1,0 +1,24 @@
+- name: Create Azure Storage Account and Blob Container
+  host: localhost
+  gather_facts: no
+  collections:
+    - azure.azcollection
+  tasks:
+    - name: Create Storage account
+      azure_rm_storageaccount:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ storage_account_name }}"
+        account_type: Standard_LRS
+        kind: StorageV2
+        enable_https_traffic_only: yes
+      vars:
+        storage_account_name: "MainAzureStorageAccount"
+
+    - name: Create blob container
+      azure_rm_storageblob:
+        resource_group: "{{ resource_group_name }}"
+        storage_account_name: "{{ storage_account_name }}"
+        name: "{{ blob_container_name }}"
+        public_access: container
+      vars:
+        blob_container_name: "openscap-reports"
