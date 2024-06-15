@@ -4,19 +4,18 @@ on:
   workflow_dispatch:
     inputs:
       numberOfDevelopmentVms:
-        description: 'Number of testing environment VMs to create'
+        description: "Number of testing environment VMs to create"
         required: true
         default: 1
         type: number
       numberOfProductionVms:
-        description: 'Number of production environment VMs to create'
+        description: "Number of production environment VMs to create"
         required: true
         default: 1
         type: number
 
 jobs:
   Create_VMs:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +24,7 @@ jobs:
       - name: python setup
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install Ansible
         run: |
@@ -51,11 +50,24 @@ jobs:
           DOCKER_DB_USER: ${{ secrets.DOCKER_DB_USER }}
           DOCKER_DB_PASSWORD: ${{ secrets.DOCKER_DB_PASSWORD }}
           DOCKER_DB_NAME: ${{ secrets.DOCKER_DB_NAME }}
-        run: ansible-playbook configure_vms.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME"
+          VAULT_USER: ${{ secrets.VAULT_USER }}
+          VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
+        run: ansible-playbook configure_vms.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME" -e VAULT_USER="$VAULT_USER" -e VAULT_PASSWORD="$VAULT_PASSWORD"
+
+      - name: Configure Azure credentials
+        run: az logout
 
       - name: Export SSH key
-        uses: actions/upload-artifact@v4
-        with:
-          name: privatekey.pem
-          path: "~/.ssh/ansible_key.pem"
-          retention-days: 1
+        env:
+          VAULT_USER: ${{ secrets.VAULT_USER }}
+          VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
+          VAULT_URL: ${{ secrets.VAULT_URL }}
+          VAULT_SECRET_PATH: ${{ secrets.VAULT_SECRET_PATH }}
+        run: |
+          sudo apt-get install -y jq curl
+          clientToken=$(curl -X POST "$VAULT_URL/v1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")
+          ssh_key_content=$(cat ~/.ssh/ansible_key.pem | jq -Rs .)
+          curl -X POST "$VAULT_URL/v1/$VAULT_SECRET_PATH" -H "X-Vault-Token: $clientToken" -d "{\"key\": $ssh_key_content}"
+
+        # clientToken=$(curl -X POST "$VAULT_URL/v1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")
+        # curl -X GET "$VAULT_URL/v1/$VAULT_SECRET_PATH" -H "X-Vault-Token: $clientToken" | jq -r '.data."key"'
