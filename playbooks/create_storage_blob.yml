@@ -1,5 +1,5 @@
 - name: Create Azure Storage Account and Blob Container
-  host: localhost
+  hosts: localhost
   gather_facts: no
   collections:
     - azure.azcollection
