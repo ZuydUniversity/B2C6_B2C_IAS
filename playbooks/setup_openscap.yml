@@ -15,9 +15,10 @@
         update-cache: yes
 
     - name: Setup azure cli
-      shell: |
-        sudo apt remove azure-cli -y && sudo apt autoremove -y
-        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      shell:
+        cmd: |
+          sudo apt remove azure-cli -y && sudo apt autoremove -y
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
     - name: Create directory for SCAP content
       file:
@@ -26,23 +27,24 @@
         mode: '0755'
 
     - name: Install OpenSCAP
-      shell: |
-        SSG_VERSION=$(git ls-remote --tags --ref --sort v:refname https://github.com/ComplianceAsCode/content.git | grep -Pio '(\d+(\.)){2}[\w\.-][\d+]' | tail -1)
-        sudo wget https://github.com/ComplianceAsCode/content/releases/download/v${SSG_VERSION}/scap-security-guide-${SSG_VERSION}.zip -O /usr/share/xml/scap/ssg/content/ssg.zip
-        sudo unzip -jo /usr/share/xml/scap/ssg/content/ssg.zip "scap-security-guide-${SSG_VERSION}/*" -d /usr/share/xml/scap/ssg/content/
+      shell:
+        cmd: |
+          SSG_VERSION=$(git ls-remote --tags --ref --sort v:refname https://github.com/ComplianceAsCode/content.git | grep -Pio '(\d+(\.)){2}[\w\.-][\d+]' | tail -1)
+          sudo wget https://github.com/ComplianceAsCode/content/releases/download/v${SSG_VERSION}/scap-security-guide-${SSG_VERSION}.zip -O /usr/share/xml/scap/ssg/content/ssg.zip
+          sudo unzip -jo ssg.zip "scap-security-guide-${SSG_VERSION}/*" -d ssg
 
     - name: Perform one-time OpenSCAP scan
-      shell: |
-        timestamp=$(date +%Y%m%d%H%M%S)
-        report_name="openscap_report_$timestamp.html"
-        oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_ospp --results /tmp/openscap_results.xml --report /tmp/$report_name /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
-        blob_exists=$(az storage blob exists --account-name "{{ storage_account_name }}" --container-name "{{ blob_container_name }}" --name $report_name --output tsv)
-        if [ "$blob_exists" != "True" ]; then
-          az storage blob upload --account-name "{{ storage_account_name }}" --container-name "{{ blob_container_name }}" --name $report_name --file /tmp/$report_name
-        fi
-        touch /usr/local/bin/openscap_scan_done
-      args:
+      shell:
+        cmd: |
+          timestamp=$(date +%Y%m%d%H%M%S)
+          report_name="openscap_report_$timestamp.html"
+          oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_ospp --results /tmp/openscap_results.xml --report /tmp/$report_name /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
+          blob_exists=$(az storage blob exists --account-name "{{ storage_account_name }}" --container-name "{{ blob_container_name }}" --name $report_name --output tsv)
+          if [ "$blob_exists" != "True" ]; then
+            az storage blob upload --account-name "{{ storage_account_name }}" --container-name "{{ blob_container_name }}" --name $report_name --file /tmp/$report_name
+          fi
         creates: /usr/local/bin/openscap_scan_done
+
 
     - name: Create OpenSCAP scan script
       copy:
@@ -53,7 +55,12 @@
           report_name="openscap_report_$timestamp.html"
           oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_ospp --results /tmp/openscap_results.xml --report /tmp/$report_name /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
           az storage blob upload --account-name {{ storage_account_name }} --container-name {{ blob_container_name }} --name $report_name --file /tmp/$report_name
-      mode: '0755'
+
+    - name: Make script executable
+      file:
+        path: /usr/local/bin/openscap_scan.sh
+        state: file
+        mode: '0755'
 
     - name: Schedule daily OpenSCAP scan
       cron:
