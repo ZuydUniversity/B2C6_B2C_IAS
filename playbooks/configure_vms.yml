@@ -45,49 +45,6 @@
         state: present
         update_cache: yes
 
-    - name: Install OpenSCAP
-      apt:
-        name:
-          - libopenscap8
-        state: present
-        update-cache: yes
-
-    - name: Perform one-time OpenSCAP scan
-      shell:
-        cmd: |
-          timestamp=$(date +%Y%m%d%H%M%S)
-          report_name="openscap_report_$timestamp.html"
-          oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_ospp --results /tmp/openscap_results.xml --report /tmp/$report_name /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
-          blob_exists=$(az storage blob exists --account-name "{{ storage_account_name }}" --container-name "{{ blob_container_name }}" --name $report_name --output tsv)
-          if [ "$blob_exists" != "True" ]; then
-            az storage blob upload --account-name "{{ storage_account_name }}" --container-name "{{ blob_container_name }}" --name $report_name --file /tmp/$report_name
-          fi
-        creates: /usr/local/bin/openscap_scan_done
-
-
-    - name: Create OpenSCAP scan script
-      copy:
-        dest: /usr/local/bin/openscap_scan.sh
-        content: | 
-          #!/bin/bash
-          timestamp=$(date +%Y%m%d%H%M%S)
-          report_name="openscap_report_$timestamp.html"
-          oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_ospp --results /tmp/openscap_results.xml --report /tmp/$report_name /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
-          az storage blob upload --account-name {{ storage_account_name }} --container-name {{ blob_container_name }} --name $report_name --file /tmp/$report_name
-
-    - name: Make script executable
-      file:
-        path: /usr/local/bin/openscap_scan.sh
-        state: file
-        mode: '0755'
-
-    - name: Schedule daily OpenSCAP scan
-      cron:
-        name: "Daily OpenSCAP scan"
-        minute: "0"
-        hour: "0"
-        job: /usr/local/bin/openscap_scan.sh
-
 - name: Configure Development VMs
   hosts: development
   become: yes
