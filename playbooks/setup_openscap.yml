@@ -11,7 +11,7 @@
         state: present
         update-cache: yes
 
-     - name: Perform one-time OpenSCAP scan
+    - name: Perform one-time OpenSCAP scan
        shell:
         cmd: |
           timestamp=$(date +%Y%m%d%H%M%S)
