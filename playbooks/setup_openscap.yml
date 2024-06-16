@@ -12,7 +12,7 @@
         update-cache: yes
 
     - name: Perform one-time OpenSCAP scan
-       shell:
+      shell:
         cmd: |
           timestamp=$(date +%Y%m%d%H%M%S)
           report_name="openscap_report_$timestamp.html"
