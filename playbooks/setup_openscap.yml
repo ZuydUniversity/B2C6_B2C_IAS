@@ -6,7 +6,7 @@
       apt:
         name:
           - libopenscap8
-          - openscap-scanner
+          - openscap-utils
           - scap-workbench
         state: present
         update-cache: yes
@@ -46,18 +46,3 @@
         minute: "0"
         hour: "0"
         job: /usr/local/bin/openscap_scan.sh
-
-    - name: Install Azure CLI
-      apt: 
-        name: azure-cli
-        state: present
-        update-cache: yes
-
-    - name: Login to Azure CLI
-      command: >
-        az login --service-principal -u "{{ azure_client_id }}" -p "{{ azure_client_secret }}" --tenant "{{ azure_tenant_id }}"
-      environment:
-        AZURE_CLIENT_ID: "{{ azure_client_id }}"
-        AZURE_CLIENT_SECRET: "{{ azure_client_secret }}"
-        AZURE_TENANT_ID: "{{ azure_tenant_id }}"
-      when: ansible_distribution == 'Ubuntu'
