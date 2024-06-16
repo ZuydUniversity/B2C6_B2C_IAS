@@ -25,12 +25,10 @@
         https_only: yes
       when: storage_account_info is failed
 
-    - name: Check if Blob container exists
-      azure_rm_storageblob_info:
-        resource_group: "{{ resource_group_name }}"
-        storage_account_name: "{{ storage_account_name }}"
-        container_name: "{{ blob_container_name }}"
-      register: blob_container_info
+    - name: Check if Blob container exists using Azure CLI
+      command: >
+        az storage container show --account-name "{{ storage_account_name }}" --name "{{ blob_container_name }}"
+      register: blob_container_check
       ignore_errors: yes
 
     - name: Create Blob container if it does not exist
@@ -38,4 +36,4 @@
         resource_group: "{{ resource_group_name }}"
         storage_account_name: "{{ storage_account_name }}"
         container_name: "{{ blob_container_name }}"
-      when: blob_container_info is failed
+      when: blob_container_check is failed
