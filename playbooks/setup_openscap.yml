@@ -17,9 +17,14 @@
           - python3-yaml 
           - python3-setuptools 
           - xsltproc
-          - azure-cli 
         state: present
         update-cache: yes
+
+    - name: Setup azure cli
+      shell:
+        cmd: |
+          sudo apt remove azure-cli -y && sudo apt autoremove -y
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
     - name: Install OpenSCAP
       shell:
