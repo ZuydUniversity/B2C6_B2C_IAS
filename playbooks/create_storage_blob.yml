@@ -1,6 +1,8 @@
 - name: Create Azure Storage Account and Blob Container
   hosts: localhost
   gather_facts: no
+  vars_files:
+    - vars/main.yml
   collections:
     - azure.azcollection
   tasks:
