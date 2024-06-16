@@ -20,7 +20,7 @@
       azure_rm_storageblob:
         resource_group: "{{ resource_group_name }}"
         storage_account_name: "{{ storage_account_name }}"
-        name: "{{ blob_container_name }}"
+        container_name: "{{ blob_container_name }}"
         public_access: container
       vars:
         blob_container_name: "openscap-reports"
