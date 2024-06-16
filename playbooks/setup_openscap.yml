@@ -4,18 +4,34 @@
   vars_files:
     - vars/main.yml
   tasks:
-    - name: Install OpenSCAP
+    - name: Install required packages
       apt:
         name:
-          - libopenscap8
-          - ssg-base
-          - ssg-debderived
-          - ssg-debian 
-          - ssg-nondebian 
-          - ssg-applications
+          - cmake
+          - make
+          - expat 
+          - libopenscap8 
+          - libxml2-utils 
+          - ninja-build 
+          - python3-jinja2 
+          - python3-yaml 
+          - python3-setuptools 
+          - xsltproc
           - azure-cli 
         state: present
         update-cache: yes
+
+    - name: Install OpenSCAP
+      shell:
+        cmd: |
+          git clone -b master https://github.com/ComplianceAsCode/content.git
+          cd content/build/
+          cmake ../
+          make -j4
+
+          ls -lah ssg-ubuntu2204*
+          oscap info ssg-ubuntu2204-ds-1.2.xml
+          oscap info --profile xccdf_org.ssgproject.content_profile_cis_level2_server ssg-ubuntu2204-ds-1.2.xml
 
     - name: Perform one-time OpenSCAP scan
       shell:
