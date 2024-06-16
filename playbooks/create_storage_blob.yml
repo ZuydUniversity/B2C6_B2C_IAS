@@ -3,6 +3,8 @@
   gather_facts: no
   vars_files:
     - vars/main.yml
+  vars:
+    storage_account_name: "b2c6storageacct"
   collections:
     - azure.azcollection
   tasks:
@@ -13,8 +15,6 @@
         account_type: Standard_LRS
         kind: StorageV2
         https_only: yes
-      vars:
-        storage_account_name: "b2c6storageacct"
 
     - name: Create blob container
       azure_rm_storageblob:
