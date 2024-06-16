@@ -14,7 +14,7 @@
         kind: StorageV2
         https_only: yes
       vars:
-        storage_account_name: "MainAzureStorageAccount"
+        storage_account_name: "mainstorageaccount"
 
     - name: Create blob container
       azure_rm_storageblob:
