@@ -8,6 +8,8 @@
       apt:
         name:
           - libopenscap8
+          - ssg-ubuntu2204
+          - azure-cli 
         state: present
         update-cache: yes
 
