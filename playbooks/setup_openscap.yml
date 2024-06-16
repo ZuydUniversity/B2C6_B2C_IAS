@@ -8,7 +8,11 @@
       apt:
         name:
           - libopenscap8
-          - ssg-ubuntu2204
+          - ssg-base
+          - ssg-debderived
+          - ssg-debian 
+          - ssg-nondebian 
+          - ssg-applications
           - azure-cli 
         state: present
         update-cache: yes
