@@ -40,7 +40,9 @@
         if [ "$blob_exists" != "True" ]; then
           az storage blob upload --account-name "{{ storage_account_name }}" --container-name "{{ blob_container_name }}" --name $report_name --file /tmp/$report_name
         fi
-      creates: /usr/local/bin/openscap_scan_done
+        touch /usr/local/bin/openscap_scan_done
+      args:
+        creates: /usr/local/bin/openscap_scan_done
 
     - name: Create OpenSCAP scan script
       copy:
@@ -51,12 +53,7 @@
           report_name="openscap_report_$timestamp.html"
           oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_ospp --results /tmp/openscap_results.xml --report /tmp/$report_name /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
           az storage blob upload --account-name {{ storage_account_name }} --container-name {{ blob_container_name }} --name $report_name --file /tmp/$report_name
-
-    - name: Make script executable
-      file:
-        path: /usr/local/bin/openscap_scan.sh
-        state: file
-        mode: '0755'
+      mode: '0755'
 
     - name: Schedule daily OpenSCAP scan
       cron:
