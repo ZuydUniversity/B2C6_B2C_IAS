@@ -3,9 +3,6 @@
   gather_facts: no
   vars_files:
     - vars/main.yml
-  vars:
-    storage_account_name: "b2c6storageacct"
-    blob_container_name: "openscap-reports"
   collections:
     - azure.azcollection
   tasks:

@@ -1,2 +1,4 @@
 # Deze hoeven niet aangepast te worden
 resource_group_name: B2C6C
+storage_account_name: "b2c6storageacct"
+blob_container_name: "openscap-reports"

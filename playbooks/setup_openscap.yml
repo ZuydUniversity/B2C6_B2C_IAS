@@ -1,6 +1,8 @@
 - name: Setup OpenSCAP and Schedule Daily Scans
   hosts: all
   become: yes
+  vars_files:
+    - vars/main.yml
   tasks:
     - name: Install OpenSCAP
       apt:
