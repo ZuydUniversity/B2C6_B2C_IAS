@@ -6,8 +6,6 @@
       apt:
         name:
           - libopenscap8
-          - openscap-utils
-          - scap-workbench
         state: present
         update-cache: yes
 
