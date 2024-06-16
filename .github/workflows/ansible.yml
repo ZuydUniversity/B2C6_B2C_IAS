@@ -41,6 +41,10 @@ jobs:
       - name: Make SSH directory
         run: mkdir /home/runner/.ssh
 
+      - name: Create storage blob
+        working-directory: ./playbooks
+        run: ansible-playbook create_storage_blob.yml
+
       - name: Create VMs
         working-directory: ./playbooks
         run: ansible-playbook create_vms.yml -e DEVELOPMENT_VMS=${{ github.event.inputs.numberOfDevelopmentVms }} -e PRODUCTION_VMS=${{ github.event.inputs.numberOfProductionVms }}
@@ -52,14 +56,6 @@ jobs:
           DOCKER_DB_PASSWORD: ${{ secrets.DOCKER_DB_PASSWORD }}
           DOCKER_DB_NAME: ${{ secrets.DOCKER_DB_NAME }}
         run: ansible-playbook configure_vms.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME"
-
-      - name: Create storage blob
-        working-directory: ./playbooks
-        run: ansible-playbook create_storage_blob.yml
-
-      - name: Setup openscap
-        working-directory: ./playbooks
-        run: ansible-playbook setup_openscap.yml
 
       - name: Export SSH key
         uses: actions/upload-artifact@v4
