@@ -12,7 +12,7 @@
         name: "{{ storage_account_name }}"
         account_type: Standard_LRS
         kind: StorageV2
-        enable_https_traffic_only: yes
+        https_only: yes
       vars:
         storage_account_name: "MainAzureStorageAccount"
 
