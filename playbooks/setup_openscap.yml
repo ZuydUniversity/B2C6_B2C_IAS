@@ -50,17 +50,16 @@
       debug:
         var: openscap_profiles.stdout_lines
 
-    - name: Perform one-time OpenSCAP scan
-      shell:
-        cmd: |
-          timestamp=$(date +%Y%m%d%H%M%S)
-          report_name="openscap_report_$timestamp.html"
-          oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_ospp --results /tmp/openscap_results.xml --report /tmp/$report_name /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
-          blob_exists=$(az storage blob exists --account-name "{{ storage_account_name }}" --container-name "{{ blob_container_name }}" --name $report_name --output tsv)
-          if [ "$blob_exists" != "True" ]; then
-            az storage blob upload --account-name "{{ storage_account_name }}" --container-name "{{ blob_container_name }}" --name $report_name --file /tmp/$report_name
-          fi
-        creates: /usr/local/bin/openscap_scan_done
+   - name: Perform one-time OpenSCAP scan
+      shell: |
+        timestamp=$(date +%Y%m%d%H%M%S)
+        report_name="openscap_report_$timestamp.html"
+        oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_cis_level1_server --results /tmp/openscap_results.xml --report /tmp/$report_name /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
+        blob_exists=$(az storage blob exists --account-name "{{ storage_account_name }}" --container-name "{{ blob_container_name }}" --name $report_name --output tsv)
+        if [ "$blob_exists" != "True" ]; then
+          az storage blob upload --account-name "{{ storage_account_name }}" --container-name "{{ blob_container_name }}" --name $report_name --file /tmp/$report_name
+        fi
+      creates: /usr/local/bin/openscap_scan_done
 
     - name: Create OpenSCAP scan script
       copy:
@@ -69,7 +68,7 @@
           #!/bin/bash
           timestamp=$(date +%Y%m%d%H%M%S)
           report_name="openscap_report_$timestamp.html"
-          oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_ospp --results /tmp/openscap_results.xml --report /tmp/$report_name /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
+          oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_cis_level1_server --results /tmp/openscap_results.xml --report /tmp/$report_name /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
           az storage blob upload --account-name {{ storage_account_name }} --container-name {{ blob_container_name }} --name $report_name --file /tmp/$report_name
 
     - name: Set execute permissions on OpenSCAP scan script
