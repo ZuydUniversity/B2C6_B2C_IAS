@@ -50,7 +50,7 @@
       debug:
         var: openscap_profiles.stdout_lines
 
-   - name: Perform one-time OpenSCAP scan
+    - name: Perform one-time OpenSCAP scan
       shell: |
         timestamp=$(date +%Y%m%d%H%M%S)
         report_name="openscap_report_$timestamp.html"
