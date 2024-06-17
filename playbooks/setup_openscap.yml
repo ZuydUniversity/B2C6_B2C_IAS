@@ -59,7 +59,6 @@
         if [ "$blob_exists" != "True" ]; then
           az storage blob upload --account-name "{{ storage_account_name }}" --container-name "{{ blob_container_name }}" --name $report_name --file /tmp/$report_name
         fi
-      creates: /usr/local/bin/openscap_scan_done
 
     - name: Create OpenSCAP scan script
       copy:
