@@ -42,6 +42,14 @@
         msg: "OpenSCAP installation failed. Check the previous output for details."
       when: openscap_install_result.rc != 0
 
+    - name: List available OpenSCAP profiles
+      shell: oscap info /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
+      register: openscap_profiles
+
+    - name: Debug available profiles
+      debug:
+        var: openscap_profiles.stdout_lines
+
     - name: Perform one-time OpenSCAP scan
       shell:
         cmd: |
