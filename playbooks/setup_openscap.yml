@@ -29,8 +29,18 @@
     - name: Install OpenSCAP
       shell:
         cmd: |
-          sudo wget https://github.com/ComplianceAsCode/content/archive/refs/tags/v0.1.73.zip -O /usr/share/xml/scap/ssg/content/ssg.zip
-          sudo unzip -jo /usr/share/xml/scap/ssg/content/ssg.zip "scap-security-guide-0.1.73/*" -d ssg
+          set -e
+          SSG_VERSION=$(git ls-remote --tags --ref --sort v:refname https://github.com/ComplianceAsCode/content.git | grep -Pio '(\d+(\.)){2}[\w\.-][\d+]' | tail -1)
+          echo "Downloading SCAP Security Guide version: $SSG_VERSION"
+          sudo wget https://github.com/ComplianceAsCode/content/releases/download/v${SSG_VERSION}/scap-security-guide-${SSG_VERSION}.zip -O /usr/share/xml/scap/ssg/content/ssg.zip
+          sudo unzip -jo /usr/share/xml/scap/ssg/content/ssg.zip "scap-security-guide-${SSG_VERSION}/*" -d /usr/share/xml/scap/ssg/content/
+      register: openscap_install_result
+      ignore_errors: yes
+
+    - name: Check if OpenSCAP installation was successful
+      fail:
+        msg: "OpenSCAP installation failed. Check the previous output for details."
+      when: openscap_install_result.rc != 0
 
     - name: Perform one-time OpenSCAP scan
       shell:
@@ -44,7 +54,6 @@
           fi
         creates: /usr/local/bin/openscap_scan_done
 
-
     - name: Create OpenSCAP scan script
       copy:
         dest: /usr/local/bin/openscap_scan.sh
@@ -54,12 +63,7 @@
           report_name="openscap_report_$timestamp.html"
           oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_ospp --results /tmp/openscap_results.xml --report /tmp/$report_name /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
           az storage blob upload --account-name {{ storage_account_name }} --container-name {{ blob_container_name }} --name $report_name --file /tmp/$report_name
-
-    - name: Make script executable
-      file:
-        path: /usr/local/bin/openscap_scan.sh
-        state: file
-        mode: '0755'
+      mode: '0755'
 
     - name: Schedule daily OpenSCAP scan
       cron:
