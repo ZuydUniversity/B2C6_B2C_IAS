@@ -29,9 +29,8 @@
     - name: Install OpenSCAP
       shell:
         cmd: |
-          SSG_VERSION=$(git ls-remote --tags --ref --sort v:refname https://github.com/ComplianceAsCode/content.git | grep -Pio '(\d+(\.)){2}[\w\.-][\d+]' | tail -1)
           sudo wget https://github.com/ComplianceAsCode/content/archive/refs/tags/v0.1.73.zip -O /usr/share/xml/scap/ssg/content/ssg.zip
-          sudo unzip -jo ssg.zip "scap-security-guide-${SSG_VERSION}/*" -d ssg
+          sudo unzip -jo /usr/share/xml/scap/ssg/content/ssg.zip "scap-security-guide-0.1.73/*" -d ssg
 
     - name: Perform one-time OpenSCAP scan
       shell:
