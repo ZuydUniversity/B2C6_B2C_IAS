@@ -11,6 +11,7 @@
           - curl 
           - zip 
           - git
+          - cron
         state: present
         update-cache: yes
 
