@@ -126,6 +126,9 @@
     VAULT_ADDR: 'http://127.0.0.1:8200'
     DBUS_SESSION_BUS_ADDRESS: /dev/null.\
   tasks:
+    - name: Update Dynamic DNS Record
+      shell: curl $DDNS_LINK
+
     - name: Initialize Vault
       shell: "vault operator init -key-shares=1 -key-threshold=1 -format=json"
       register: vault_init
