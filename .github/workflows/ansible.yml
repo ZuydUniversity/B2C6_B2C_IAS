@@ -15,7 +15,7 @@ on:
         type: number
 
 jobs:
-  Create_VMs:
+  Restore_VMs:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,30 +34,49 @@ jobs:
       - name: Install Azure Collection requirements
         run: pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements.txt
 
-      - name: Configure Azure credentials
+      - name: Make SSH and logs directory
+        run: |
+          mkdir -p ~/.ssh
+          mkdir -p ~/logs
+
+      - name: Login to Azure
         run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
 
-      - name: Make SSH directory
-        run: mkdir /home/runner/.ssh
-
-      - name: Create VMs
+      - name: Make shared resources
         working-directory: ./playbooks
-        run: ansible-playbook create_vms.yml -e DEVELOPMENT_VMS=${{ github.event.inputs.numberOfDevelopmentVms }} -e PRODUCTION_VMS=${{ github.event.inputs.numberOfProductionVms }}
+        run: ansible-playbook creation/setup.yml
+
+      - name: Create Vms
+        working-directory: ./playbooks
+        run: |
+          (ansible-playbook creation/vault.yml > ~/logs/vault-create.log 2>&1) &
+          (ansible-playbook creation/development.yml -e DEVELOPMENT_VMS=${{ github.event.inputs.numberOfDevelopmentVms }} > ~/logs/development-create.log 2>&1) &
+          (ansible-playbook creation/production.yml -e PRODUCTION_VMS=${{ github.event.inputs.numberOfProductionVms }} > ~/logs/production-create.log 2>&1) 
+          wait
 
       - name: Configure VMs
-        working-directory: ./playbooks
         env:
           DOCKER_DB_USER: ${{ secrets.DOCKER_DB_USER }}
           DOCKER_DB_PASSWORD: ${{ secrets.DOCKER_DB_PASSWORD }}
           DOCKER_DB_NAME: ${{ secrets.DOCKER_DB_NAME }}
           VAULT_USER: ${{ secrets.VAULT_USER }}
           VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
-        run: ansible-playbook configure_vms.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME" -e VAULT_USER="$VAULT_USER" -e VAULT_PASSWORD="$VAULT_PASSWORD"
+        run: |
+          (ansible-playbook configuration/vault.yml -e VAULT_USER="$VAULT_USER" -e VAULT_PASSWORD="$VAULT_PASSWORD" > ~/logs/vault-configure.log 2>&1) &
 
-      - name: Configure Azure credentials
+          ansible-playbook configuration/docker.yml > ~/logs/docker-configure.log 2>&1
+
+          (ansible-playbook configuration/development.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME" > ~/logs/development-configure.log 2>&1) &
+          (ansible-playbook configuration/production.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME" > ~/logs/production-configure.log 2>&1) &
+
+          wait
+      
+      - name: Log out of Azure
+        if: always()
         run: az logout
 
       - name: Export SSH key
+        if: always()
         env:
           VAULT_USER: ${{ secrets.VAULT_USER }}
           VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
@@ -69,5 +88,25 @@ jobs:
           ssh_key_content=$(cat ~/.ssh/ansible_key.pem | jq -Rs .)
           curl -X POST "$VAULT_URL/v1/$VAULT_SECRET_PATH" -H "X-Vault-Token: $clientToken" -d "{\"key\": $ssh_key_content}"
 
+        # Retrieve SSH key from Vault like so:
         # clientToken=$(curl -X POST "$VAULT_URL/v1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")
         # curl -X GET "$VAULT_URL/v1/$VAULT_SECRET_PATH" -H "X-Vault-Token: $clientToken" | jq -r '.data."key"'
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: logs-${{ github.run_id }}
+          path: |
+            ~/logs/
+
+      - name: Shoutout
+        if: always()
+        run: |
+          echo " "
+          echo -e "\e[34m              ___    ___             \e[0m"
+          echo -e "\e[34m  _         / __)  / __)            \e[0m"
+          echo -e "\e[34m_| |_ ___ _| |__ _| |__ _____ _____ \e[0m"
+          echo -e "\e[34m(_   _) _ (_   __|_   __) ___ | ___ |\e[0m"
+          echo -e "\e[34m  | || |_| || |    | |  | ____| ____|\e[0m"
+          echo -e "\e[34m   \__)___/ |_|    |_|  |_____)_____)\e[0m"

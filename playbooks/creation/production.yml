@@ -1,0 +1,64 @@
+- name: Create Production VMs
+  hosts: localhost
+  gather_facts: no
+  collections:
+    - azure.azcollection
+  vars:
+    number_of_vms: "{{ PRODUCTION_VMS | int }}"
+    vm_type: Production
+  vars_files:
+    - ../vars/main.yml
+  tasks:
+    - name: Read the contents of the public key
+      set_fact:
+        public_key_content: "{{ lookup('file', '~/.ssh/ansible_key.pem.pub') }}"
+
+    - name: Create public IP addresses
+      loop: "{{ range(1, (number_of_vms | int) + 1) | list }}"
+      loop_control:
+        loop_var: vm_number
+      register: output_ip_addresses
+      azure_rm_publicipaddress:
+        resource_group: "{{ resource_group_name }}"
+        sku: Standard
+        allocation_method: Static
+        name: "{{ vm_type }}VM{{ vm_number }}_public_IP"
+        domain_name_label: "{{ vm_type | lower }}vm{{ vm_number }}-klasb2c"
+
+    - name: Create network interfaces
+      loop: "{{ range(1, (number_of_vms | int) + 1) | list }}"
+      loop_control:
+        loop_var: vm_number
+      azure_rm_networkinterface:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ vm_type }}VM{{ vm_number }}_Nic"
+        virtual_network: "{{ resource_group_name }}_vnet"
+        subnet: vm_subnet
+        security_group: "{{ resource_group_name }}_SecurityGroup"
+        ip_configurations:
+          - name: ipconfig1
+            public_ip_address_name: "{{ vm_type }}VM{{ vm_number }}_public_IP"
+
+    - name: Create virtual machines
+      loop: "{{ range(1, (number_of_vms | int) + 1) | list }}"
+      loop_control:
+        loop_var: vm_number
+      azure_rm_virtualmachine:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ vm_type }}VM{{ vm_number }}"
+        vm_size: Standard_B1s
+        admin_username: "{{ resource_group_name | lower }}"
+        ssh_password_enabled: false
+        ssh_public_keys:
+          - path: /home/{{ resource_group_name | lower }}/.ssh/authorized_keys
+            key_data: "{{ public_key_content }}"
+        image:
+          offer: 0001-com-ubuntu-minimal-jammy
+          publisher: Canonical
+          sku: minimal-22_04-lts-gen2
+          version: latest
+        network_interfaces:
+          - name: "{{ vm_type }}VM{{ vm_number }}_Nic"
+        managed_disk_type: Standard_LRS
+        tags:
+          environment: "{{ vm_type | lower }}"
