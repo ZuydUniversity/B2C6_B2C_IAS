@@ -60,6 +60,7 @@ jobs:
           wait
 
       - name: Configure VMs
+        working-directory: ./playbooks
         env:
           DOCKER_DB_USER: ${{ secrets.DOCKER_DB_USER }}
           DOCKER_DB_PASSWORD: ${{ secrets.DOCKER_DB_PASSWORD }}
