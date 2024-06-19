@@ -85,9 +85,9 @@ jobs:
           VAULT_SECRET_PATH: ${{ secrets.VAULT_SECRET_PATH }}
         run: |
           sudo apt-get install -y jq curl
-          clientToken=$(curl -X POST "$VAULT_URLv1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")
+          clientToken=$(curl -X POST "$VAULT_URL/v1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")
           ssh_key_content=$(cat ~/.ssh/ansible_key.pem | jq -Rs .)
-          curl -X POST "$VAULT_URLv1/$VAULT_SECRET_PATH" -H "X-Vault-Token: $clientToken" -d "{\"key\": $ssh_key_content}"
+          curl -X POST "$VAULT_URL/v1/$VAULT_SECRET_PATH" -H "X-Vault-Token: $clientToken" -d "{\"key\": $ssh_key_content}"
 
         # Retrieve SSH key from Vault like so:
         # clientToken=$(curl -X POST "$VAULT_URL/v1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")
