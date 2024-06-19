@@ -18,7 +18,7 @@
         sku: Standard
         allocation_method: Static
         name: "{{ vm_type }}VM_public_IP"
-        domain_name_label: "{{ vm_type | lower }}-castestingansible" # TODO "{{ vm_type | lower }}-klasb2c"
+        domain_name_label: "{{ vm_type | lower }}-klasb2c"
 
     - name: Create network interfaces
       azure_rm_networkinterface:

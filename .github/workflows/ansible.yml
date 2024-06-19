@@ -40,12 +40,7 @@ jobs:
           mkdir -p ~/logs
 
       - name: Login to Azure
-        run: |
-          az login --use-device-code
-          az account set --subscription "Student Credit Cas"
-
-      # - name: Login to Azure
-      #   run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+        run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
 
       - name: Make shared resources
         working-directory: ./playbooks
@@ -56,9 +51,9 @@ jobs:
         run: |
           (ansible-playbook creation/vault.yml > ~/logs/vault-create.log 2>&1) &
           (ansible-playbook creation/development.yml -e DEVELOPMENT_VMS=${{ github.event.inputs.numberOfDevelopmentVms }} > ~/logs/development-create.log 2>&1) &
+          (ansible-playbook creation/production.yml -e PRODUCTION_VMS=${{ github.event.inputs.numberOfProductionVms }} > ~/logs/production-create.log 2>&1) &
+
           wait
-      # (ansible-playbook creation/production.yml -e PRODUCTION_VMS=${{ github.event.inputs.numberOfProductionVms }} > ~/logs/production-create.log 2>&1) 
-          
 
       - name: Configure VMs
         working-directory: ./playbooks
@@ -74,9 +69,10 @@ jobs:
           ansible-playbook configuration/docker.yml > ~/logs/docker-configure.log 2>&1
 
           (ansible-playbook configuration/development.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME" > ~/logs/development-configure.log 2>&1) &
-          wait
-      # (ansible-playbook configuration/production.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME" > ~/logs/production-configure.log 2>&1) &
+          (ansible-playbook configuration/production.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME" > ~/logs/production-configure.log 2>&1) &
 
+          wait
+      
       - name: Log out of Azure
         if: always()
         run: az logout
@@ -86,12 +82,12 @@ jobs:
           VAULT_USER: ${{ secrets.VAULT_USER }}
           VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
           VAULT_URL: ${{ secrets.VAULT_URL }}
-          VAULT_SECRET_PATH: ${{ secrets.VAULT_SECRET_PATH }} # TODO replace http://vault-castestingansible.westeurope.cloudapp.azure.com:8200/ with $VAULT_URL
+          VAULT_SECRET_PATH: ${{ secrets.VAULT_SECRET_PATH }}
         run: |
           sudo apt-get install -y jq curl
-          clientToken=$(curl -X POST "http://vault-castestingansible.westeurope.cloudapp.azure.com:8200/v1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")
+          clientToken=$(curl -X POST "$VAULT_URLv1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")
           ssh_key_content=$(cat ~/.ssh/ansible_key.pem | jq -Rs .)
-          curl -X POST "http://vault-castestingansible.westeurope.cloudapp.azure.com:8200/v1/$VAULT_SECRET_PATH" -H "X-Vault-Token: $clientToken" -d "{\"key\": $ssh_key_content}"
+          curl -X POST "$VAULT_URLv1/$VAULT_SECRET_PATH" -H "X-Vault-Token: $clientToken" -d "{\"key\": $ssh_key_content}"
 
         # Retrieve SSH key from Vault like so:
         # clientToken=$(curl -X POST "$VAULT_URL/v1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")
