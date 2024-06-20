@@ -54,3 +54,6 @@
 
     - name: Launch Docker Compose
       ansible.builtin.command: docker compose -f /tmp/dockercompose-file up --detach
+
+    - name: Update Dynamic DNS Record
+      shell: curl $DDNS_LINK
