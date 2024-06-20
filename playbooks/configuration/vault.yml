@@ -1,0 +1,185 @@
+- name: Install Vault packages
+  hosts: vault
+  remote_user: vault
+  become: yes
+  tasks:
+    - name: Update apt repository cache
+      apt:
+        update_cache: yes
+
+    - name: Install gpg and wget
+      apt:
+        name: 
+          - gpg
+          - wget
+        state: present
+
+    - name: Download and add HashiCorp GPG key
+      shell: |
+        wget -O- https://apt.releases.hashicorp.com/gpg | \
+        gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+    - name: Verify the fingerprint of the GPG key
+      shell: gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
+
+    - name: Add HashiCorp repository
+      shell: |
+        echo \
+          "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com \
+          $(lsb_release -cs) main" | \
+          tee /etc/apt/sources.list.d/hashicorp.list > /dev/null
+        apt-get update
+
+    - name: Install Vault
+      apt:
+        name: vault
+        state: present
+
+- name: Setup Vault Service
+  hosts: vault
+  remote_user: vault
+  become: yes
+  environment:
+    VAULT_ADDR: 'http://127.0.0.1:8200'
+  vars:
+    vault_config_path: "/home/vault/config.hcl"
+    vault_data_path: "/home/vault/data"
+  tasks:
+    - name: Create Vault data directory
+      file:
+        path: "{{ vault_data_path }}"
+        state: directory
+        mode: '0755'
+    
+    - name: Change owner of Vault data directory
+      file:
+        path: "{{ vault_data_path }}"
+        owner: vault
+        group: vault
+        recurse: yes
+
+    - name: Create Vault configuration file
+      copy:
+        content: |
+          storage "raft" {
+            path    = "{{ vault_data_path }}"
+          }
+          listener "tcp" {
+            address     = "0.0.0.0:8200"
+            tls_disable = "true"
+          }
+          telemetry {
+            disable_hostname = true
+            prometheus_retention_time = "24h"
+          }
+          api_addr = "http://127.0.0.1:8200"
+          cluster_addr = "http://127.0.0.1:8201"
+          ui = true
+        dest: "{{ vault_config_path }}"
+        mode: '0755'
+
+    - name: Create systemd service file for Vault
+      copy:
+        content: |
+          [Unit]
+          Description=HashiCorp Vault
+          Documentation=https://www.vaultproject.io/docs/
+          After=network-online.target
+          Wants=network-online.target
+
+          [Service]
+          User=root
+          Group=root
+          ExecStart=/usr/bin/vault server -config={{ vault_config_path }}
+          ExecReload=/bin/kill -HUP $MAINPID
+          KillSignal=SIGINT
+          Restart=on-failure
+          RestartSec=5
+          LimitNOFILE=65536
+
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/vault.service
+        mode: '0755'
+
+    - name: Reload systemd to apply the new service
+      systemd:
+        daemon_reload: yes
+
+    - name: Start and enable Vault service
+      systemd:
+        name: vault
+        enabled: yes
+        state: started
+
+    - name: Wait for Vault to start
+      wait_for:
+        port: 8200
+        delay: 1
+        timeout: 60
+
+- name: Configure Vault
+  hosts: vault
+  remote_user: vault
+  become: yes
+  environment:
+    VAULT_ADDR: 'http://127.0.0.1:8200'
+    DBUS_SESSION_BUS_ADDRESS: /dev/null.\
+  tasks:
+    - name: Initialize Vault
+      shell: "vault operator init -key-shares=1 -key-threshold=1 -format=json"
+      register: vault_init
+      changed_when: "'root_token' in vault_init.stdout"
+
+    - name: Save Vault keys
+      copy:
+        content: "{{ vault_init.stdout }}"
+        dest: "/home/vault/vault_keys.json"
+        mode: '0600'
+
+    - name: Unseal Vault
+      shell: "vault operator unseal {{ (vault_init.stdout | from_json).unseal_keys_b64[0] }}"
+
+    - name: Login to Vault
+      become: yes
+      shell: "vault login {{ (vault_init.stdout | from_json).root_token }}"
+
+    - name: Enable KV secrets engine
+      shell: "vault secrets enable kv"
+
+    - name: Enable userpass auth method
+      shell: vault auth enable userpass
+
+    - name: Create user policy
+      copy:
+        dest: /home/vault/api-user-policy.hcl
+        content: |
+          path "kv/*" {
+            capabilities = ["create", "read"]
+          }
+
+          path "auth/userpass/login/*" {
+            capabilities = ["create", "read"]
+          }
+
+    - name: Apply user policy to vault
+      shell: vault policy write api-user-policy /home/vault/api-user-policy.hcl
+
+    - name: Create user with userpass auth method
+      shell: vault write auth/userpass/users/{{ VAULT_USER }} password={{ VAULT_PASSWORD }} policies=api-user-policy
+
+    - name: Create prometheus policy
+      copy:
+        dest: /home/vault/prometheus-policy.hcl
+        content: |
+          path "/sys/metrics" {
+            capabilities = ["read"]
+          }
+
+    - name: Apply prometheus policy to vault
+      shell: vault policy write prometheus-metrics /home/vault/prometheus-policy.hcl
+
+    - name: Create prometheus token
+      shell: |
+        vault token create -field=token -policy prometheus-metrics \
+         > /home/vault/prometheus_token

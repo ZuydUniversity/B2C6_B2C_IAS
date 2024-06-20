@@ -1,0 +1,70 @@
+- name: Setup shared files and resources
+  hosts: localhost
+  gather_facts: no
+  collections:
+    - azure.azcollection
+  vars_files:
+    - ../vars/main.yml
+  tasks:
+    - name: Generate RSA key pair
+      openssh_keypair:
+        path: "~/.ssh/{{ item }}"
+        type: ed25519
+        size: 4096
+        state: present
+      with_items:
+        - ansible_key.pem
+    
+    - name: Create a resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group_name }}"
+        location: westeurope
+
+    - name: Create a virtual network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ resource_group_name }}_vnet"
+        address_prefixes: 10.0.0.0/16
+
+    - name: Create a subnet
+      azure_rm_subnet:
+        resource_group: "{{ resource_group_name }}"
+        name: vm_subnet
+        address_prefix: 10.0.1.0/24
+        virtual_network: "{{ resource_group_name }}_vnet"
+
+    - name: Create Network Security Group
+      azure_rm_securitygroup:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ resource_group_name }}_SecurityGroup"
+        rules:
+          - name: SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 2001
+            direction: Inbound
+          - name: HTTP
+            protocol: Tcp
+            destination_port_range: 80
+            access: Allow
+            priority: 1001
+            direction: Inbound
+          - name: Backend
+            protocol: Tcp
+            destination_port_range: 8000
+            access: Allow
+            priority: 1002
+            direction: Inbound
+          - name: Database
+            protocol: Tcp
+            destination_port_range: 3306
+            access: Allow
+            priority: 1003
+            direction: Inbound
+          - name: Vault
+            protocol: Tcp
+            destination_port_range: 8200
+            access: Allow
+            priority: 1004
+            direction: Inbound

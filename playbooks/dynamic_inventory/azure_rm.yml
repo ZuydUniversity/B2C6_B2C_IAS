@@ -5,3 +5,4 @@ auth_source: auto
 conditional_groups:
   development: "'development' in tags.environment | default('none')"
   production: "'production' in tags.environment | default('none')"
+  vault: "'vault' in tags.environment | default('none')"
