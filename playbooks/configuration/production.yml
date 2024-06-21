@@ -7,6 +7,48 @@
         name: docker
         state: started
 
+    - name: Install nginx
+      apt: 
+        name: nginx
+        state: present
+      tags:
+        - nginx
+
+    - name: Install Certbot NGINX plugin
+      apt:
+        name: python3-certbot-nginx
+        state: present
+      tags:
+        - certbot
+
+    - name: Obtain SSL certificates from Let's Encrypt
+      shell: certbot certonly --nginx -d {{ ansible_fqdn }} --non-interactive --agree-tos --email your-email@example.com
+      tags:
+        - certbot      
+
+    - name: Configure NGINX HTTPS site
+      template:
+        src: nginx_https.conf.j2
+        dest: /etc/nginx/sites-available/https
+        owner: root
+        group: root
+      notify:
+        - Reload NGINX
+      tags:
+        - nginx
+
+    - name: Enable NGINX https site
+      file:
+        src: /etc/nginx/sites-available/https
+        dest: /etc/nginx/sites-enabled/https
+        state: link
+        owner: root
+        group: root
+      notify:
+        - Reload NGINX
+      tags:
+        - nginx
+
     - name: Create Compose file
       copy:
         content: |
@@ -57,3 +99,14 @@
 
     - name: Update Dynamic DNS Record
       shell: curl $DDNS_LINK
+
+  handler: 
+    - name: Restart NGINX
+      systemd:
+        name: nginx
+        state: restarted
+
+    - name: Reload NGINX
+      systemd:
+        name: nginx
+        state: reloaded
