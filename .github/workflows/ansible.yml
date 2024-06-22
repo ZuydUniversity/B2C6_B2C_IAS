@@ -40,9 +40,7 @@ jobs:
           mkdir -p ~/logs
 
       - name: Login to Azure
-        run: |
-          az login --use-device-code
-          az account set --subscription "dc7f89bf-8674-4f02-bfc3-74efcb3134b1"
+        run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
 
       - name: Make shared resources
         working-directory: ./playbooks
