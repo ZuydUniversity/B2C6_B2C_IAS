@@ -23,6 +23,8 @@
 
     - name: Obtain SSL certificates from Let's Encrypt
       shell: certbot certonly --nginx -d myolink.info.gf --non-interactive --agree-tos --email 2201483franssen@zuyd.nl
+      args:
+        creates: /etc/letsencrypt/live/myolink.info.gf/fullchain.pem
       tags:
         - certbot      
 
