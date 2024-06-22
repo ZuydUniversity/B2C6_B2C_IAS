@@ -44,12 +44,9 @@ jobs:
           az login --use-device-code
           az account set --subscription "Azure for Students"
 
-      - name: Validate Azure Login
-        run: az account show
-
       - name: Make shared resources
         working-directory: ./playbooks
-        run: ansible-playbook creation/setup.yml
+        run: ansible-playbook -i dynamic_inventory/azure_rm.yml creation/setup.yml
 
       - name: Create Vms
         working-directory: ./playbooks
