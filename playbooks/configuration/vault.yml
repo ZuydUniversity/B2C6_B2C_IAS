@@ -148,12 +148,18 @@
       shell: "vault login {{ (vault_init.stdout | from_json).root_token }}"
 
     - name: Enable KV secrets engine
-      shell: "vault secrets enable kv"
+      shell: vault secrets enable kv
+
+    - name: Enable Database secrets engine
+      shell: vault secrets enable -path=db kv-v2
 
     - name: Enable userpass auth method
       shell: vault auth enable userpass
 
-    - name: Create user policy
+    - name: Configure userpass auth method
+      shell: vault write sys/auth/userpass/tune default_lease_ttl=1h max_lease_ttl=1h
+
+    - name: Create API user policy
       copy:
         dest: /home/vault/api-user-policy.hcl
         content: |
@@ -165,11 +171,30 @@
             capabilities = ["create", "read"]
           }
 
-    - name: Apply user policy to vault
+    - name: Apply api user policy to vault
       shell: vault policy write api-user-policy /home/vault/api-user-policy.hcl
 
-    - name: Create user with userpass auth method
+    - name: Create api user with userpass auth method
       shell: vault write auth/userpass/users/{{ VAULT_USER }} password={{ VAULT_PASSWORD }} policies=api-user-policy
+
+    - name: Create Database user policy
+      copy:
+        dest: /home/vault/database-user-policy.hcl
+        content: |
+          path "db/*" {
+            capabilities = ["create", "read", "update", "list"]
+          }
+
+          path "auth/userpass/login/*" {
+            capabilities = ["create", "read"]
+          }
+
+    - name: Apply database user policy to vault
+      shell: vault policy write database-user-policy /home/vault/database-user-policy.hcl
+
+    - name: Create database user with userpass auth method # TODO make username and password secrets
+      shell: vault write auth/userpass/users/databaseuser password=nzF2Y0Pa1xImII5M3vzkDM policies=database-user-policy
+
 
     - name: Create prometheus policy
       copy:

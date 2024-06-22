@@ -68,3 +68,27 @@
             access: Allow
             priority: 1004
             direction: Inbound
+          - name: Prometheus
+            protocol: Tcp
+            destination_port_range: 9090
+            access: Allow
+            priority: 1005
+            direction: Inbound
+          - name: NodeExporter
+            protocol: Tcp
+            destination_port_range: 9100
+            access: Allow
+            priority: 1006
+            direction: Inbound
+          - name: Alertmanager
+            protocol: Tcp
+            destination_port_range: 9093
+            access: Allow
+            priority: 1007
+            direction: Inbound
+          - name: Grafana
+            protocol: Tcp
+            destination_port_range: 3000
+            access: Allow
+            priority: 1008
+            direction: Inbound
