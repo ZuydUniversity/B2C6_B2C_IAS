@@ -22,7 +22,7 @@
         - certbot
 
     - name: Obtain SSL certificates from Let's Encrypt
-      shell: certbot certonly --nginx -d {{ ansible_fqdn }} --non-interactive --agree-tos --email your-email@example.com
+      shell: certbot certonly --nginx -d myolink.info.gf --non-interactive --agree-tos --email 2201483franssen@zuyd.nl
       tags:
         - certbot      
 

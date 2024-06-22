@@ -1,20 +1,20 @@
 server {
-    listen 80;
-    server_name {{ ansible_fqdn }};
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
-    }
-}
-
-server {
     listen 443 ssl;
-    server_name {{ ansible_fqdn }};
+    server_name myolink.info.gf;
 
-    ssl_certificate /etc/letsencrypt/live/{{ ansible_fqdn }}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/{{ ansible_fqdn }}/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/myolink.info.gf/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/myolink.info.gf/privkey.pem;
 
     location / {
-        proxy_pass http://localhost:8000;
+        proxy_pass http://localhost;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /backend/ {
+        proxy_pass http://localhost:8000/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
