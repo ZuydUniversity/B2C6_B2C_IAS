@@ -46,7 +46,7 @@ jobs:
 
       - name: Make shared resources
         working-directory: ./playbooks
-        run: ansible-playbook -i dynamic_inventory/azure_rm.yml creation/setup.yml
+        run: ansible-playbook creation/setup.yml
 
       - name: Create Vms
         working-directory: ./playbooks
