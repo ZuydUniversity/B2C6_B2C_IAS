@@ -42,7 +42,7 @@ jobs:
       - name: Login to Azure
         run: |
           az login --use-device-code
-          az account set --subscription "dc7f89bf-8674-4f02-bfc3-74efcb3134b1"
+          az account set --subscription "cfa5a16d-765f-414f-8fd7-51cfb25cb2c8"
 
       - name: Make shared resources
         working-directory: ./playbooks
