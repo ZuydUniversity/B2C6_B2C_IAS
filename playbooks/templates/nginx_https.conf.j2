@@ -1,4 +1,10 @@
 server {
+    listen 80;
+    server_name myolink.info.gf;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
     listen 443 ssl;
     server_name myolink.info.gf;
 
@@ -6,6 +12,6 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/myolink.info.gf/privkey.pem;
 
     location / {
-        proxy_pass http://localhost;
+        proxy_pass http://localhost:5000;
     }
 }
