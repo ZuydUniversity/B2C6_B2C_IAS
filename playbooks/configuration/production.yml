@@ -49,6 +49,14 @@
         name: docker
         state: started
 
+    - name: Update Dynamic DNS Record
+      shell: curl "{{ DDNS_LINK }}"
+      register: ddns_result
+
+    - name: Check DDNS update result
+      debug:
+        var: ddns_result.stdout
+
     - name: Install nginx
       apt: 
         name: nginx
@@ -153,14 +161,6 @@
 
     - name: Launch Docker Compose
       ansible.builtin.command: docker compose -f /tmp/dockercompose-file up --detach
-
-    - name: Update Dynamic DNS Record
-      shell: curl "{{ DDNS_LINK }}"
-      register: ddns_result
-
-    - name: Check DDNS update result
-      debug:
-        var: ddns_result.stdout
 
   handlers: 
     - name: Restart NGINX
