@@ -121,7 +121,16 @@
       args:
         creates: /etc/letsencrypt/live/myolink.info.gf/fullchain.pem
       tags:
-        - certbot  
+        - certbot
+
+    - name: Disable default NGINX site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify:
+        - Reload NGINX
+      tags:
+        - nginx
 
     - name: Configure NGINX HTTPS site
       template:
@@ -142,7 +151,7 @@
         owner: root
         group: root
       notify:
-        - Restart NGINX
+        - Reload NGINX
       tags:
         - nginx
 
