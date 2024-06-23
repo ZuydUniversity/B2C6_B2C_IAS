@@ -155,7 +155,7 @@
       ansible.builtin.command: docker compose -f /tmp/dockercompose-file up --detach
 
     - name: Update Dynamic DNS Record
-      shell: curl $DDNS_LINK
+      shell: curl "{{ DDNS_LINK }}"
       register: ddns_result
 
     - name: Check DDNS update result

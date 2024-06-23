@@ -209,4 +209,4 @@
          > /home/vault/prometheus_token
 
     - name: Update Dynamic DNS Record
-      shell: curl $DDNS_LINK
+      shell: curl "{{ DDNS_LINK }}"
