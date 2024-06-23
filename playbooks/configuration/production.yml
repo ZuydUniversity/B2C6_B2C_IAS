@@ -57,50 +57,6 @@
       debug:
         var: ddns_result.stdout
 
-    - name: Install nginx
-      apt: 
-        name: nginx
-        state: present
-      tags:
-        - nginx
-
-    - name: Install Certbot NGINX plugin
-      apt:
-        name: python3-certbot-nginx
-        state: present
-      tags:
-        - certbot
-
-    - name: Obtain SSL certificates from Let's Encrypt
-      shell: certbot certonly --nginx -d myolink.info.gf --non-interactive --agree-tos --email 2201483franssen@zuyd.nl
-      args:
-        creates: /etc/letsencrypt/live/myolink.info.gf/fullchain.pem
-      tags:
-        - certbot  
-
-    - name: Configure NGINX HTTPS site
-      template:
-        src: nginx_https.conf.j2
-        dest: /etc/nginx/sites-available/https
-        owner: root
-        group: root
-      notify:
-        - Reload NGINX
-      tags:
-        - nginx
-
-    - name: Enable NGINX https site
-      file:
-        src: /etc/nginx/sites-available/https
-        dest: /etc/nginx/sites-enabled/https
-        state: link
-        owner: root
-        group: root
-      notify:
-        - Reload NGINX
-      tags:
-        - nginx    
-
     - name: Create Compose file
       copy:
         content: |
@@ -161,6 +117,50 @@
 
     - name: Launch Docker Compose
       ansible.builtin.command: docker compose -f /tmp/dockercompose-file up --detach
+
+    - name: Install nginx
+      apt: 
+        name: nginx
+        state: present
+      tags:
+        - nginx
+
+    - name: Install Certbot NGINX plugin
+      apt:
+        name: python3-certbot-nginx
+        state: present
+      tags:
+        - certbot
+
+    - name: Obtain SSL certificates from Let's Encrypt
+      shell: certbot certonly --nginx -d myolink.info.gf --non-interactive --agree-tos --email 2201483franssen@zuyd.nl
+      args:
+        creates: /etc/letsencrypt/live/myolink.info.gf/fullchain.pem
+      tags:
+        - certbot  
+
+    - name: Configure NGINX HTTPS site
+      template:
+        src: nginx_https.conf.j2
+        dest: /etc/nginx/sites-available/https
+        owner: root
+        group: root
+      notify:
+        - Reload NGINX
+      tags:
+        - nginx
+
+    - name: Enable NGINX https site
+      file:
+        src: /etc/nginx/sites-available/https
+        dest: /etc/nginx/sites-enabled/https
+        state: link
+        owner: root
+        group: root
+      notify:
+        - Reload NGINX
+      tags:
+        - nginx
 
   handlers: 
     - name: Restart NGINX
