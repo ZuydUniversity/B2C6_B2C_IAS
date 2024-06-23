@@ -125,7 +125,7 @@
 
     - name: Configure NGINX HTTPS site
       template:
-        src: ../../templates/nginx_https.conf.j2
+        src: nginx_https.conf.j2
         dest: /etc/nginx/sites-available/https
         owner: root
         group: root
