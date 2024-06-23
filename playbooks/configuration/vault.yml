@@ -189,8 +189,8 @@
     - name: Apply database user policy to vault
       shell: vault policy write database-user-policy /home/vault/database-user-policy.hcl
 
-    - name: Create database user with userpass auth method # TODO make username and password secrets
-      shell: vault write auth/userpass/users/databaseuser password=nzF2Y0Pa1xImII5M3vzkDM policies=database-user-policy
+    - name: Create database user with userpass auth method
+      shell: vault write auth/userpass/users/{{ VAULT_DB_USERNAME }} password={{ VAULT_DB_PASSWORD }} policies=database-user-policy
 
     - name: Create prometheus policy
       copy:
