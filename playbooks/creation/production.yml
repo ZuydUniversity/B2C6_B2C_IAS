@@ -23,7 +23,7 @@
         sku: Standard
         allocation_method: Static
         name: "{{ vm_type }}VM{{ vm_number }}_public_IP"
-        domain_name_label: "{{ vm_type | lower }}vm{{ vm_number }}-tristanAnsible"
+        domain_name_label: "{{ vm_type | lower }}vm{{ vm_number }}-klasb2c"
 
     - name: Create network interfaces
       loop: "{{ range(1, (number_of_vms | int) + 1) | list }}"
