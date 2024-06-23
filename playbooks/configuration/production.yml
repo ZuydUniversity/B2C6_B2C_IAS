@@ -28,29 +28,6 @@
       tags:
         - certbot      
 
-    - name: Configure NGINX HTTPS site
-      template:
-        src: nginx_https.conf.j2
-        dest: /etc/nginx/sites-available/https
-        owner: root
-        group: root
-      notify:
-        - Reload NGINX
-      tags:
-        - nginx
-
-    - name: Enable NGINX https site
-      file:
-        src: /etc/nginx/sites-available/https
-        dest: /etc/nginx/sites-enabled/https
-        state: link
-        owner: root
-        group: root
-      notify:
-        - Reload NGINX
-      tags:
-        - nginx
-
     - name: Create Compose file
       copy:
         content: |
