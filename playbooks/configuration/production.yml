@@ -90,20 +90,7 @@
                 - db_data:/var/lib/mysql
               ports:
                 - 3306:3306
-
-            backup:
-              image: fradelg/mysql-cron-backup
-              restart: always
-              environment:
-                MYSQL_HOST: db
-                MYSQL_PORT: 3306
-                MYSQL_USER: root
-                MYSQL_PASS: "{{ DB_PASSWORD }}"
-                CRON_TIME: "0 3 * * *"  # Daily at 3am
-                BACKUP_DIR: /backups
-              volumes:
-                - db_backup:/backups
-
+                
             watchtower:
               image: containrrr/watchtower
               restart: always
@@ -111,8 +98,6 @@
                 - /var/run/docker.sock:/var/run/docker.sock
               command: --cleanup --interval 300
 
-            volumes:
-              db_data:
         dest: /tmp/dockercompose-file
 
     - name: Launch Docker Compose
