@@ -9,7 +9,7 @@
 
     - name: Install gpg and wget
       apt:
-        name: 
+        name:
           - gpg
           - wget
         state: present
@@ -40,7 +40,7 @@
   remote_user: vault
   become: yes
   environment:
-    VAULT_ADDR: 'http://127.0.0.1:8200'
+    VAULT_ADDR: "http://127.0.0.1:8200"
   vars:
     vault_config_path: "/home/vault/config.hcl"
     vault_data_path: "/home/vault/data"
@@ -49,8 +49,8 @@
       file:
         path: "{{ vault_data_path }}"
         state: directory
-        mode: '0755'
-    
+        mode: "0755"
+
     - name: Change owner of Vault data directory
       file:
         path: "{{ vault_data_path }}"
@@ -76,7 +76,7 @@
           cluster_addr = "http://127.0.0.1:8201"
           ui = true
         dest: "{{ vault_config_path }}"
-        mode: '0755'
+        mode: "0755"
 
     - name: Create systemd service file for Vault
       copy:
@@ -100,7 +100,7 @@
           [Install]
           WantedBy=multi-user.target
         dest: /etc/systemd/system/vault.service
-        mode: '0755'
+        mode: "0755"
 
     - name: Reload systemd to apply the new service
       systemd:
@@ -123,12 +123,9 @@
   remote_user: vault
   become: yes
   environment:
-    VAULT_ADDR: 'http://127.0.0.1:8200'
+    VAULT_ADDR: "http://127.0.0.1:8200"
     DBUS_SESSION_BUS_ADDRESS: /dev/null.\
   tasks:
-    - name: Update Dynamic DNS Record
-      shell: curl $DDNS_LINK
-
     - name: Initialize Vault
       shell: "vault operator init -key-shares=1 -key-threshold=1 -format=json"
       register: vault_init
@@ -138,7 +135,7 @@
       copy:
         content: "{{ vault_init.stdout }}"
         dest: "/home/vault/vault_keys.json"
-        mode: '0600'
+        mode: "0600"
 
     - name: Unseal Vault
       shell: "vault operator unseal {{ (vault_init.stdout | from_json).unseal_keys_b64[0] }}"
@@ -195,7 +192,6 @@
     - name: Create database user with userpass auth method # TODO make username and password secrets
       shell: vault write auth/userpass/users/databaseuser password=nzF2Y0Pa1xImII5M3vzkDM policies=database-user-policy
 
-
     - name: Create prometheus policy
       copy:
         dest: /home/vault/prometheus-policy.hcl
@@ -211,3 +207,6 @@
       shell: |
         vault token create -field=token -policy prometheus-metrics \
          > /home/vault/prometheus_token
+
+    - name: Update Dynamic DNS Record
+      shell: curl $DDNS_LINK
