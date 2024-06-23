@@ -67,7 +67,7 @@
               image: snailcape/cipipelinetest
               restart: always
               ports:
-                -5000:5000
+                - 5000:5000
             backend:
               image: ichishihoness/my-backend:latest
               restart: always
