@@ -162,7 +162,7 @@
       debug:
         var: ddns_result.stdout
 
-  handler: 
+  handlers: 
     - name: Restart NGINX
       systemd:
         name: nginx
