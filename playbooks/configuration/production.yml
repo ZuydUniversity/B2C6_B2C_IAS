@@ -103,7 +103,7 @@
               image: snailcape/cipipelinetest
               restart: always
               ports:
-                - 443:5000
+                - 80:5000
             backend:
               image: ichishihoness/my-backend:latest
               restart: always
