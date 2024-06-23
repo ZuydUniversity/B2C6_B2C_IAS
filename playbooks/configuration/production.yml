@@ -80,7 +80,6 @@
                 DB_PASSWORD: "{{ DB_PASSWORD }}"
                 DB_HOST: db
                 DB_NAME: "{{ DB_NAME }}"
-
             db:
               image: mariadb:latest
               restart: always
@@ -90,14 +89,14 @@
                 - db_data:/var/lib/mysql
               ports:
                 - 3306:3306
-                
             watchtower:
               image: containrrr/watchtower
               restart: always
               volumes:
                 - /var/run/docker.sock:/var/run/docker.sock
               command: --cleanup --interval 300
-
+          volumes:
+            db_data:
         dest: /tmp/dockercompose-file
 
     - name: Launch Docker Compose
