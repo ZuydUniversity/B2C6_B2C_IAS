@@ -66,6 +66,10 @@ jobs:
           VAULT_DDNS_LINK: ${{ secrets.VAULT_DDNS_LINK }}
           PRODUCTION_DDNS_LINK: ${{ secrets.PRODUCTION_DDNS_LINK }}
         run: |
+          (ansible-playbook configuration/vault.yml -e VAULT_USER="$VAULT_USER" -e VAULT_PASSWORD="$VAULT_PASSWORD" -e DDNS_LINK="$VAULT_DDNS_LINK" > ~/logs/vault-configure.log 2>&1) &
+
+          ansible-playbook configuration/docker.yml > ~/logs/docker-configure.log 2>&1
+
           (ansible-playbook configuration/production.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME" -e DDNS_LINK="$PRODUCTION_DDNS_LINK" > ~/logs/production-configure.log 2>&1) &
 
           wait
