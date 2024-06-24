@@ -133,7 +133,7 @@
 
     - name: Configure NGINX HTTPS site
       template:
-        src: templates/nginx_https.conf.j2
+        src: nginx_https.conf.j2
         dest: /etc/nginx/sites-available/https
         owner: root
         group: root
@@ -151,20 +151,6 @@
         group: root
       notify:
         - Reload NGINX
-      tags:
-        - nginx
-
-    - name: Check NGINX configuration
-      command: nginx -t
-      register: nginx_test
-      ignore_errors: yes
-      tags:
-        - nginx
-
-    - name: Display NGINX configuration test result
-      debug:
-        var: nginx_test.stdout
-      when: nginx_test.rc != 0
       tags:
         - nginx
 
