@@ -61,7 +61,7 @@
     - name: Pull Nginx Docker image
       docker_image:
         name: nginx:latest
-        state: present
+        source: pull
 
     - name: Create directory for nginx and SSL certs
       file:
