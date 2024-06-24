@@ -71,11 +71,6 @@
         -out /etc/nginx/certs/myolink.crt
         -subj "/CN=myolink.info.gf"
 
-    - name: Copy nginx config template
-      template:
-        src: templates/nginx_https.conf.j2
-        dest: /etc/nginx/conf.d/nginx_https.conf
-
     - name: Create Compose file
       copy:
         content: |
