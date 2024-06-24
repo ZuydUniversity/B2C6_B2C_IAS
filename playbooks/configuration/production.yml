@@ -154,6 +154,20 @@
       tags:
         - nginx
 
+    - name: Check NGINX configuration
+      command: nginx -t
+      register: nginx_test
+      ignore_errors: yes
+      tags:
+        - nginx
+
+    - name: Display NGINX configuration test result
+      debug:
+        var: nginx_test.stdout
+      when: nginx_test.rc != 0
+      tags:
+        - nginx
+
   handlers: 
     - name: Restart NGINX
       systemd:
