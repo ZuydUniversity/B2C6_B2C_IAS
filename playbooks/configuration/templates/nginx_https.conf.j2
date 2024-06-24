@@ -2,10 +2,12 @@ server {
     listen 443 ssl;
     server_name myolink.info.gf;
 
-    ssl_certificate /etc/ssl/certs/myolink.crt;
-    ssl_certificate_key /etc/ssl/private/myolink.key;
+    ssl_certificate /etc/nginx/certs/myolink.crt;
+    ssl_certificate_key /etc/nginx/certs/myolink.key;
 
     location / {
         proxy_pass http://localhost:8080;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
     }
 }

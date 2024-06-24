@@ -89,6 +89,22 @@
                 - db_data:/var/lib/mysql
               ports:
                 - 3306:3306
+
+            nginx:
+              image: nginx:latest
+              restart: always
+              ports:
+                - 443:443
+              volumes:
+                - ./nginx.conf:/etc/nginx/nginx.conf
+                - ./certs:/etc/nginx/certs
+              depends_on:
+                - frontend
+                - backend
+              links:
+                - frontend
+                - backend
+                
             watchtower:
               image: containrrr/watchtower
               restart: always
@@ -102,65 +118,27 @@
     - name: Launch Docker Compose
       ansible.builtin.command: docker compose -f /tmp/dockercompose-file up --detach
 
-    - name: Install nginx
-      apt: 
-        name: nginx
-        state: present
-      tags:
-        - nginx
-
     - name: Install openssl
       apt:
         name: openssl
         state: present
 
-    - name: Generate SSL private key and certificate
-      shell: |
-        openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 \
-        -subj "/C=NL/ST=Limburg/L=Heerlen/O=ZUYD/OU=IT/CN=myolink.info.gf" \
-        -keyout /etc/ssl/private/myolink.key -out /etc/ssl/certs/myolink.crt
-      tags:
-        - ssl
+    - name: Generate SSL certificate
+      openssl_certificate:
+        path: /path/to/certs/nginx.crt
+        privatekey_path: /path/to/certs/nginx.key
+        common_name: "myolink.info.gf"
+        state: present
 
-    - name: Disable default NGINX site
-      file:
-        path: /etc/nginx/sites-enabled/default
-        state: absent
-      notify:
-        - Reload NGINX
-      tags:
-        - nginx
-
-    - name: Configure NGINX HTTPS site
+    - name: Deploy NGINX configuration
       template:
-        src: templates/nginx_https.conf.j2
-        dest: /etc/nginx/sites-available/
-        owner: root
-        group: root
+        src: nginx.conf.j2
+        dest: /path/to/nginx.conf
       notify:
-        - Reload NGINX
-      tags:
-        - nginx
-
-    - name: Enable NGINX https site
-      file:
-        src: /etc/nginx/sites-available/
-        dest: /etc/nginx/sites-enabled/
-        state: link
-        owner: root
-        group: root
-      notify:
-        - Reload NGINX
-      tags:
-        - nginx
-
-  handlers: 
-    - name: Restart NGINX
-      systemd:
+        - restart nginx
+    
+  handlers:
+    - name: restart nginx
+      service:
         name: nginx
         state: restarted
-
-    - name: Reload NGINX
-      systemd:
-        name: nginx
-        state: reloaded
