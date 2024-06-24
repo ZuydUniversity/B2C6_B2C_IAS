@@ -133,8 +133,8 @@
 
     - name: Configure NGINX HTTPS site
       template:
-        src: nginx_https.conf.j2
-        dest: /etc/nginx/sites-available/https
+        src: templates/nginx_https.conf.j2
+        dest: /etc/nginx/sites-available/
         owner: root
         group: root
       notify:
@@ -144,8 +144,8 @@
 
     - name: Enable NGINX https site
       file:
-        src: /etc/nginx/sites-available/https
-        dest: /etc/nginx/sites-enabled/https
+        src: /etc/nginx/sites-available/
+        dest: /etc/nginx/sites-enabled/
         state: link
         owner: root
         group: root
