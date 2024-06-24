@@ -85,7 +85,7 @@
         content: |
           server {
               listen 443 ssl;
-              server_name localhost;
+              server_name myolink.info.gf;
 
               ssl_certificate /etc/nginx/certs/nginx-selfsigned.crt;
               ssl_certificate_key /etc/nginx/certs/nginx-selfsigned.key;
