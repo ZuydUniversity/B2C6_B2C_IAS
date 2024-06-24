@@ -79,17 +79,21 @@ jobs:
         if: always()
         run: az logout
 
-      - name: Export SSH key
+      - name: Export secrets to Vault
         env:
           VAULT_USER: ${{ secrets.VAULT_USER }}
           VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
           VAULT_URL: ${{ secrets.VAULT_URL }}
           VAULT_SECRET_PATH: ${{ secrets.VAULT_SECRET_PATH }}
+          VAULT_DB_SECRET_PATH: ${{ secrets.VAULT_DB_SECRET_PATH }}
+          DOCKER_DB_USER: ${{ secrets.DOCKER_DB_USER }}
+          DOCKER_DB_PASSWORD: ${{ secrets.DOCKER_DB_PASSWORD }}
         run: |
           sudo apt-get install -y jq curl
           clientToken=$(curl -X POST "$VAULT_URL/v1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")
           ssh_key_content=$(cat ~/.ssh/ansible_key.pem | jq -Rs .)
           curl -X POST "$VAULT_URL/v1/$VAULT_SECRET_PATH" -H "X-Vault-Token: $clientToken" -d "{\"key\": $ssh_key_content}"
+          curl -X POST "$VAULT_URL/v1/$VAULT_DB_SECRET_PATH" -H "X-Vault-Token: $clientToken" -d "{\"username\": \"$DOCKER_DB_USER\", \"password\": \"$DOCKER_DB_PASSWORD\"}"
 
         # Retrieve SSH key from Vault like so:
         # clientToken=$(curl -X POST "$VAULT_URL/v1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")
