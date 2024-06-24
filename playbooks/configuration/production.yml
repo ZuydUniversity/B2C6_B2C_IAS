@@ -69,9 +69,9 @@
         state: directory
 
     - name: Create SSL certs directory
-        file:
-          path: "/etc/nginx/certs"
-          state: directory
+      file:
+        path: "/etc/nginx/certs"
+        state: directory
 
     - name: Generate SSL certificate and private key
       command: >
