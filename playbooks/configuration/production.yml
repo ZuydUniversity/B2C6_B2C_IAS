@@ -58,13 +58,18 @@
       debug:
         var: ddns_result.stdout
 
-    - name: Generate SSL certificate
-      openssl_certificate:
-        path: /etc/nginx/certs/myolink.crt
-        privatekey_path: /etc/nginx/certs/myolink.key
-        common_name: "myolink.info.gf"
-        provider: selfsigned
-        state: present
+    - name: Create certs directory for nginx
+      file:
+        path: /etc/nginx/certs
+        state: directory
+        mode: '0755'
+
+    - name: Generate SSL certificate and private key
+      command: >
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048
+        -keyout /etc/nginx/certs/myolink.key
+        -out /etc/nginx/certs/myolink.crt
+        -subj "/CN=myolink.info.gf"
 
     - name: Create Compose file
       copy:
