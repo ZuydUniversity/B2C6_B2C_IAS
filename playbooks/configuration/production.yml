@@ -114,27 +114,11 @@
         name: openssl
         state: present
 
-    - name: Generate SSL private key
-      openssl_privatekey:
-        path: /etc/ssl/private/myolink.key
-        size: 2048
-      tags:
-        - ssl
-
-    - name: Generate SSL certificate
-      openssl_certificate:
-        path: /etc/ssl/certs/myolink.crt
-        privatekey_path: /etc/ssl/private/myolink.key
-        common_name: myolink.info.gf
-        subject:
-          locality_name: "City"
-          organization_name: "Company"
-          organizational_unit_name: "IT"
-        issuer:
-          locality_name: "City"
-          organization_name: "Company"
-          organizational_unit_name: "IT"
-        days_valid: 365
+    - name: Generate SSL private key and certificate
+      shell: |
+        openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 \
+        -subj "/C=NL/ST=Limburg/L=Heerlen/O=ZUYD/OU=IT/CN=myolink.info.gf" \
+        -keyout /etc/ssl/private/myolink.key -out /etc/ssl/certs/myolink.crt
       tags:
         - ssl
 
