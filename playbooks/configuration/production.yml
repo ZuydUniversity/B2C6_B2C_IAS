@@ -63,6 +63,7 @@
         path: /etc/nginx/certs/myolink.crt
         privatekey_path: /etc/nginx/certs/myolink.key
         common_name: "myolink.info.gf"
+        provider: selfsigned
         state: present
 
     - name: Create Compose file
