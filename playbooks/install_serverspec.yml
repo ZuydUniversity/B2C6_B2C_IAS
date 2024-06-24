@@ -1,0 +1,22 @@
+---
+- name: Install Serverspec
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update apt repository cache
+      apt:
+        update_cache: yes
+
+    - name: Install Ruby and required packages
+      apt:
+        name:
+          - ruby-full
+          - build-essential
+          - libssl-dev
+        state: present
+
+    - name: Install Serverspec using gem
+      gem:
+        name: serverspec
+        state: present
+        user_install: no
