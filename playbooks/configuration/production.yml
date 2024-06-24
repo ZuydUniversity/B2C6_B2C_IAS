@@ -58,18 +58,47 @@
       debug:
         var: ddns_result.stdout
 
-    - name: Create certs directory for nginx
+    - name: Pull Nginx Docker image
+      docker_image:
+        name: nginx:latest
+        state: present
+
+    - name: Create directory for nginx and SSL certs
       file:
-        path: /etc/nginx/certs
+        path: "/etc/nginx"
         state: directory
-        mode: '0755'
+
+    - name: Create SSL certs directory
+        file:
+          path: "/etc/nginx/certs"
+          state: directory
 
     - name: Generate SSL certificate and private key
       command: >
         openssl req -x509 -nodes -days 365 -newkey rsa:2048
-        -keyout /etc/nginx/certs/myolink.key
-        -out /etc/nginx/certs/myolink.crt
+        -keyout /etc/nginx/certs/nginx-selfsigned.key
+        -out /etc/nginx/certs/nginx-selfsigned.crt
         -subj "/CN=myolink.info.gf"
+
+    - name: Write Nginx configuration file
+      copy:
+        content: |
+          server {
+              listen 443 ssl;
+              server_name localhost;
+
+              ssl_certificate /etc/nginx/certs/nginx-selfsigned.crt;
+              ssl_certificate_key /etc/nginx/certs/nginx-selfsigned.key;
+
+              location / {
+                  proxy_pass http://localhost:8080;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+          }
+        dest: "/etc/nginx/nginx.conf"
 
     - name: Create Compose file
       copy:
@@ -103,18 +132,6 @@
                 - db_data:/var/lib/mysql
               ports:
                 - 3306:3306
-
-            nginx:
-              image: nginx:latest
-              restart: always
-              ports:
-                - 443:443
-              volumes:
-                - /etc/nginx/certs:/etc/nginx/certs:ro
-                - configurations/templates/nginx_https.conf.j2:/etc/nginx/conf.d/default.conf:ro
-              depends_on:
-                - frontend
-                - backend
                 
             watchtower:
               image: containrrr/watchtower
@@ -122,22 +139,21 @@
               volumes:
                 - /var/run/docker.sock:/var/run/docker.sock
               command: --cleanup --interval 300
+              
           volumes:
             db_data:
         dest: /tmp/dockercompose-file
 
+    - name: Run Nginx Docker container
+      docker_container:
+        name: nginx-container
+        image: nginx:latest
+        ports:
+          - "443:443"
+        volumes:
+          - "/etc/nginx:/etc/nginx"
+        state: started
+        restart_policy: always
+
     - name: Launch Docker Compose
       ansible.builtin.command: docker compose -f /tmp/dockercompose-file up --detach
-
-    - name: Deploy NGINX configuration
-      template:
-        src: templates/nginx_https.conf.j2
-        dest: /etc/nginx/conf.d/default.conf
-      notify:
-        - restart nginx
-    
-  handlers:
-    - name: restart nginx
-      service:
-        name: nginx
-        state: restarted
