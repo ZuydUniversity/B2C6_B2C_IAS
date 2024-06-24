@@ -115,7 +115,7 @@
               ports:
                 - 443:443
               volumes:
-                - ./configurations/templates/nginx_https.conf.j2:/etc/nginx/conf.d/default.conf:ro
+                - ./templates/nginx_https.conf.j2:/etc/nginx/conf.d/default.conf:ro
                 - /etc/nginx/certs:/etc/nginx/certs:ro
               depends_on:
                 - frontend
