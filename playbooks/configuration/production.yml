@@ -109,19 +109,34 @@
       tags:
         - nginx
 
-    - name: Install Certbot NGINX plugin
+    - name: Install openssl
       apt:
-        name: python3-certbot-nginx
+        name: openssl
         state: present
-      tags:
-        - certbot
 
-    - name: Obtain SSL certificates from Let's Encrypt
-      shell: certbot certonly --nginx -d myolink.info.gf --non-interactive --agree-tos --email 2201483franssen@zuyd.nl
-      args:
-        creates: /etc/letsencrypt/live/myolink.info.gf/fullchain.pem
+    - name: Generate SSL private key
+      openssl_privatekey:
+        path: /etc/ssl/private/myolink.key
+        size: 2048
       tags:
-        - certbot
+        - ssl
+
+    - name: Generate SSL certificate
+      openssl_certificate:
+        path: /etc/ssl/certs/myolink.crt
+        privatekey_path: /etc/ssl/private/myolink.key
+        common_name: myolink.info.gf
+        subject:
+          locality_name: "City"
+          organization_name: "Company"
+          organizational_unit_name: "IT"
+        issuer:
+          locality_name: "City"
+          organization_name: "Company"
+          organizational_unit_name: "IT"
+        days_valid: 365
+      tags:
+        - ssl
 
     - name: Disable default NGINX site
       file:
