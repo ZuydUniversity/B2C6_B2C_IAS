@@ -73,7 +73,7 @@
 
     - name: Copy nginx config template
       template:
-        src: configurations/templates/nginx_https.conf.j2
+        src: templates/nginx_https.conf.j2
         dest: /etc/nginx/conf.d/nginx_https.conf
 
     - name: Create Compose file
@@ -115,7 +115,7 @@
               ports:
                 - 443:443
               volumes:
-                - ./templates/nginx_https.conf.j2:/etc/nginx/conf.d/default.conf:ro
+                - templates/nginx_https.conf.j2:/etc/nginx/conf.d/default.conf:ro
                 - /etc/nginx/certs:/etc/nginx/certs:ro
               depends_on:
                 - frontend
