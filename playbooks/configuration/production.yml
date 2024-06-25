@@ -79,6 +79,8 @@
         -keyout /etc/nginx/certs/nginx-selfsigned.key
         -out /etc/nginx/certs/nginx-selfsigned.crt
         -subj "/CN=myolink.info.gf"
+      args:
+        creates: /etc/nginx/certs/nginx-selfsigned.crt
 
     - name: Write Nginx configuration file
       copy:
@@ -91,7 +93,7 @@
               ssl_certificate_key /etc/nginx/certs/nginx-selfsigned.key;
 
               location / {
-                  proxy_pass http://localhost:8080;
+                  proxy_pass http://myolink.info.gf:8080;
                   proxy_set_header Upgrade $http_upgrade;
                   proxy_set_header Connection "upgrade";
               }
