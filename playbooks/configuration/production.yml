@@ -70,6 +70,31 @@
           - python3-certbot-nginx
         state: present
 
+    - name: Write temporary Nginx configuration for HTTP
+      copy:
+        content: |
+          server {
+              listen 80;
+              server_name myolink.info.gf;
+
+              location / {
+                root /var/www/html;
+                index index.html;
+              }
+          }
+        dest: "/etc/nginx/sites-available/myolink_temp.conf"
+
+    - name: Enable temporary HTTP site
+      file:
+        src: "/etc/nginx/sites-available/myolink_temp.conf"
+        dest: "/etc/nginx/sites-enabled/myolink_temp.conf"
+        state: link
+
+    - name: Restart Nginx to apply temporary configuration
+      service:
+        name: nginx
+        state: restarted
+
     - name: Ensure Nginx service is running and enabled
       service:
         name: nginx
