@@ -14,7 +14,7 @@
         state: present
       with_items:
         - ansible_key.pem
-    t
+    
     - name: Create a resource group
       azure_rm_resourcegroup:
         name: "{{ resource_group_name }}"
