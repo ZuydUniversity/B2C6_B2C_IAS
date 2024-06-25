@@ -89,7 +89,7 @@
                   proxy_set_header Connection "upgrade";
               }
           }
-        dest: "/etc/nginx/sites-available/nginx.conf"
+        dest: "/etc/nginx/sites-enabled/nginx.conf"
 
     - name: Create Compose file
       copy:
