@@ -116,6 +116,8 @@
               restart: always
               ports:
                 - 8080:5000
+              networks:
+                - app-network
 
             backend:
               image: ichishihoness/my-backend:latest
@@ -129,6 +131,8 @@
                 DB_PASSWORD: "{{ DB_PASSWORD }}"
                 DB_HOST: db
                 DB_NAME: "{{ DB_NAME }}"
+              networks:
+                - app-network
 
             db:
               image: mariadb:latest
@@ -139,6 +143,8 @@
                 - db_data:/var/lib/mysql
               ports:
                 - 3306:3306
+              networks:
+                - app-network
                 
             watchtower:
               image: containrrr/watchtower
@@ -146,6 +152,9 @@
               volumes:
                 - /var/run/docker.sock:/var/run/docker.sock
               command: --cleanup --interval 300
+
+          networks:
+            app-network:
 
           volumes:
             db_data:
