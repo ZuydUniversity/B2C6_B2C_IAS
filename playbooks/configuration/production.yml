@@ -93,7 +93,7 @@
               ssl_certificate_key /etc/nginx/certs/nginx-selfsigned.key;
 
               location / {
-                  proxy_pass http://myolink.info.gf:8080;
+                  proxy_pass http://localhost:5000;
                   proxy_set_header Upgrade $http_upgrade;
                   proxy_set_header Connection "upgrade";
               }
@@ -111,6 +111,9 @@
               restart: always
               ports:
                 - 8080:5000
+              networks:
+                - app-network
+
             backend:
               image: ichishihoness/my-backend:latest
               restart: always
@@ -123,6 +126,9 @@
                 DB_PASSWORD: "{{ DB_PASSWORD }}"
                 DB_HOST: db
                 DB_NAME: "{{ DB_NAME }}"
+              networks:
+                - app-network
+
             db:
               image: mariadb:latest
               restart: always
@@ -132,6 +138,8 @@
                 - db_data:/var/lib/mysql
               ports:
                 - 3306:3306
+              networks:
+                - app-network
                 
             watchtower:
               image: containrrr/watchtower
@@ -139,21 +147,21 @@
               volumes:
                 - /var/run/docker.sock:/var/run/docker.sock
               command: --cleanup --interval 300
-              
+              networks:
+                - app-network
+
+            nginx:
+              image: nginx:latest
+              ports:
+                - 443:443
+              volumes:
+                - /etc/nginx:/etc/nginx
+              networks:
+                - app-network
+
           volumes:
             db_data:
         dest: /tmp/dockercompose-file
-
-    - name: Run Nginx Docker container
-      docker_container:
-        name: nginx-container
-        image: nginx:latest
-        ports:
-          - "443:443"
-        volumes:
-          - "/etc/nginx:/etc/nginx"
-        state: started
-        restart_policy: always
 
     - name: Launch Docker Compose
       ansible.builtin.command: docker compose -f /tmp/dockercompose-file up --detach
