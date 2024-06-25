@@ -50,7 +50,7 @@
             access: Allow
             priority: 1001
             direction: Inbound
-          - name: HTTPS
+          - name: Allow-HTTPS
             protocol: Tcp
             destination_port_range: 443
             access: Allow
