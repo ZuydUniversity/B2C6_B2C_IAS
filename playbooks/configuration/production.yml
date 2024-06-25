@@ -65,7 +65,7 @@
 
     - name: Create directory for nginx and SSL certs
       file:
-        path: "/etc/nginx"
+        path: "/etc/nginx/sites-available"
         state: directory
 
     - name: Create SSL certs directory
@@ -98,7 +98,7 @@
                   proxy_set_header Connection "upgrade";
               }
           }
-        dest: "/etc/nginx/nginx.conf"
+        dest: "/etc/nginx/sites-available/nginx.conf"
 
     - name: Create Compose file
       copy:
