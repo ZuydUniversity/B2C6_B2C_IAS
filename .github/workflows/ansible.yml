@@ -98,6 +98,7 @@ jobs:
           remoteCommand="sudo apt-get install jq -y && sudo cat ~/vault_keys.json | jq -r '.root_token'"
           ssh -i ~/.ssh/ansible_key.pem $user@$host $remoteCommand > ~/vault_token
           clientToken=$(cat ~/vault_token)
+          echo $clientToken
           curl -X POST "$VAULT_URL/v1/$VAULT_DB_SECRET_PATH" -H "X-Vault-Token: $clientToken" -d "{\"username\": \"$DOCKER_DB_USER\", \"password\": \"$DOCKER_DB_PASSWORD\"}"
 
         # Retrieve SSH key from Vault like so:
