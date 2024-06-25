@@ -63,11 +63,6 @@
         path: "/etc/nginx/certs"
         state: directory
 
-    - name: Add Certbot PPA
-      apt_repository:
-        repo: ppa:certbot/certbot
-        state: present
-
     - name: Install Certbot
       apt:
         name:
