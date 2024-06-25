@@ -159,6 +159,9 @@
               networks:
                 - app-network
 
+          networks:
+            app-network:
+
           volumes:
             db_data:
         dest: /tmp/dockercompose-file
