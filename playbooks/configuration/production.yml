@@ -71,7 +71,9 @@
         -out /etc/nginx/certs/nginx-selfsigned.crt
         -subj "/CN=myolink.info.gf"
       args:
-        creates: /etc/nginx/certs/nginx-selfsigned.crt
+        creates: 
+          - /etc/nginx/certs/nginx-selfsigned.crt
+          - /etc/nginx/certs/nginx-selfsigned.key
 
     - name: Write Nginx configuration file
       copy:
@@ -89,7 +91,19 @@
                   proxy_set_header Connection "upgrade";
               }
           }
-        dest: "/etc/nginx/sites-enabled/nginx.conf"
+        dest: "/etc/nginx/sites-available/myolink.conf"
+
+    - name: Enable SSL site
+      file:
+        src: "/etc/nginx/sites-available/myolink.conf"
+        dest: "/etc/nginx/sites-enabled/myolink.conf"
+        state: link
+
+    - name: Ensure Nginx service is running and enabled
+      service:
+        name: nginx
+        state: started
+        enabled: yes
 
     - name: Create Compose file
       copy:
@@ -136,12 +150,6 @@
           volumes:
             db_data:
         dest: /tmp/dockercompose-file
-
-    - name: Ensure Nginx service is running and enabled
-      service:
-        name: nginx
-        state: started
-        enabled: yes
 
     - name: Launch Docker Compose
       ansible.builtin.command: docker compose -f /tmp/dockercompose-file up --detach
