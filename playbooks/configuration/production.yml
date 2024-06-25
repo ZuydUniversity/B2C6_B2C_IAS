@@ -11,7 +11,6 @@
         name:
           - ca-certificates
           - curl
-          - openssl
           - nginx
         state: present
 
@@ -64,16 +63,28 @@
         path: "/etc/nginx/certs"
         state: directory
 
-    - name: Generate SSL certificate and private key
-      command: >
-        openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-        -keyout /etc/nginx/certs/nginx-selfsigned.key \
-        -out /etc/nginx/certs/nginx-selfsigned.crt \
-        -subj "/CN=myolink.info.gf"
-      args:
-        creates:
-          - /etc/nginx/certs/nginx-selfsigned.crt
-          - /etc/nginx/certs/nginx-selfsigned.key
+    - name: Add Certbot PPA
+      apt_repository:
+        repo: ppa:certbot/certbot
+        state: present
+
+    - name: Install Certbot
+      apt:
+        name:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+
+    - name: Ensure Nginx service is running and enabled
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Obtain SSL certificates from Let's Encrypt
+      command: certbot --nginx -d myolink.info.gf --non-interactive --agree-tos -m 2201483franssen@zuyd.nl
+      register: certbot_result
+      ignore_errors: yes
 
     - name: Write Nginx configuration file
       copy:
@@ -82,8 +93,8 @@
               listen 443 ssl;
               server_name myolink.info.gf;
 
-              ssl_certificate /etc/nginx/certs/nginx-selfsigned.crt;
-              ssl_certificate_key /etc/nginx/certs/nginx-selfsigned.key;
+              ssl_certificate /etc/letsencrypt/live/myolink.info.gf/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/myolink.info.gf/privkey.pem;
 
               location / {
                   proxy_pass http://localhost:8080;
@@ -99,11 +110,10 @@
         dest: "/etc/nginx/sites-enabled/myolink.conf"
         state: link
 
-    - name: Ensure Nginx service is running and enabled
+    - name: Restart Nginx
       service:
         name: nginx
-        state: started
-        enabled: yes
+        state: restarted
 
     - name: Create Compose file
       copy:
