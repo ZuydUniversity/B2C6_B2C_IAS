@@ -12,6 +12,7 @@
           - ca-certificates
           - curl
           - openssl
+          - nginx
         state: present
 
     - name: Create directory for Docker GPG key
@@ -58,16 +59,6 @@
       debug:
         var: ddns_result.stdout
 
-    - name: Pull Nginx Docker image
-      docker_image:
-        name: nginx:latest
-        source: pull
-
-    - name: Create directory for nginx and SSL certs
-      file:
-        path: "/etc/nginx/sites-available"
-        state: directory
-
     - name: Create SSL certs directory
       file:
         path: "/etc/nginx/certs"
@@ -93,7 +84,7 @@
               ssl_certificate_key /etc/nginx/certs/nginx-selfsigned.key;
 
               location / {
-                  proxy_pass http://localhost:5000;
+                  proxy_pass http://localhost:8080;
                   proxy_set_header Upgrade $http_upgrade;
                   proxy_set_header Connection "upgrade";
               }
@@ -111,8 +102,6 @@
               restart: always
               ports:
                 - 8080:5000
-              networks:
-                - app-network
 
             backend:
               image: ichishihoness/my-backend:latest
@@ -126,8 +115,6 @@
                 DB_PASSWORD: "{{ DB_PASSWORD }}"
                 DB_HOST: db
                 DB_NAME: "{{ DB_NAME }}"
-              networks:
-                - app-network
 
             db:
               image: mariadb:latest
@@ -138,8 +125,6 @@
                 - db_data:/var/lib/mysql
               ports:
                 - 3306:3306
-              networks:
-                - app-network
                 
             watchtower:
               image: containrrr/watchtower
@@ -147,24 +132,16 @@
               volumes:
                 - /var/run/docker.sock:/var/run/docker.sock
               command: --cleanup --interval 300
-              networks:
-                - app-network
-
-            nginx:
-              image: nginx:latest
-              ports:
-                - 443:443
-              volumes:
-                - /etc/nginx:/etc/nginx
-              networks:
-                - app-network
-
-          networks:
-            app-network:
 
           volumes:
             db_data:
         dest: /tmp/dockercompose-file
+
+    - name: Ensure Nginx service is running and enabled
+      service:
+        name: nginx
+        state: started
+        enabled: yes
 
     - name: Launch Docker Compose
       ansible.builtin.command: docker compose -f /tmp/dockercompose-file up --detach
