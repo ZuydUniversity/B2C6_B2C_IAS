@@ -14,7 +14,7 @@
         state: present
       with_items:
         - ansible_key.pem
-    
+    t
     - name: Create a resource group
       azure_rm_resourcegroup:
         name: "{{ resource_group_name }}"
@@ -49,6 +49,12 @@
             destination_port_range: 80
             access: Allow
             priority: 1001
+            direction: Inbound
+          - name: HTTPS
+            protocol: Tcp
+            destination_port_range: 443
+            access: Allow
+            priority: 200
             direction: Inbound
           - name: Backend
             protocol: Tcp
