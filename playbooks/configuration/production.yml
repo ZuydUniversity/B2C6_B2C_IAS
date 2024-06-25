@@ -90,6 +90,15 @@
       copy:
         content: |
           server {
+              listen 80;
+              server_name myolink.info.gf;
+
+              location / {
+                return 301 https://myolink.info.gf;
+              }
+          }
+
+          server {
               listen 443 ssl;
               server_name myolink.info.gf;
 
