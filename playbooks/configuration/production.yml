@@ -50,9 +50,21 @@
         name: docker
         state: started
 
-    - name: Update Dynamic DNS Record
-      shell: curl "{{ DDNS_LINK }}"
-      register: ddns_result
+    - name: Update Dynamic DNS Record for myolink.info.gf
+      shell: curl "{{ DDNS_LINK }}?hostname=myolink.info.gf"
+      register: ddns_result_myolink
+
+    - name: Check DDNS update result for myolink.info.gf
+      debug:
+        var: ddns_result_myolink.stdout
+
+    - name: Update Dynamic DNS Record for backend.myolink.info.gf
+      shell: curl "{{ DDNS_LINK }}?hostname=backend.myolink.info.gf"
+      register: ddns_result_backend
+
+    - name: Check DDNS update result for backend.myolink.info.gf
+      debug:
+        var: ddns_result_backend.stdout
 
     - name: Check DDNS update result
       debug:
@@ -127,6 +139,29 @@
 
               location / {
                   proxy_pass http://localhost:8080;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection "upgrade";
+              }
+          }
+
+          server {
+              listen 80;
+              server_name backend.myolink.info.gf;
+
+              location / {
+                return 301 https://backend.myolink.info.gf;
+              }
+          }
+
+          server {
+              listen 443 ssl;
+              server_name backend.myolink.info.gf;
+
+              ssl_certificate /etc/letsencrypt/live/myolink.info.gf/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/myolink.info.gf/privkey.pem;
+
+              location / {
+                  proxy_pass http://localhost:8000;
                   proxy_set_header Upgrade $http_upgrade;
                   proxy_set_header Connection "upgrade";
               }
