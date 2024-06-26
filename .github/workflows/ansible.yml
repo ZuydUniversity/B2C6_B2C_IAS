@@ -65,10 +65,10 @@ jobs:
           VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
           VAULT_DDNS_LINK: ${{ secrets.VAULT_DDNS_LINK }}
           PRODUCTION_DDNS_LINK: ${{ secrets.PRODUCTION_DDNS_LINK }}
+          VAULT_DB_USERNAME: ${{ secrets.VAULT_DB_USERNAME }}
+          VAULT_DB_PASSWORD: ${{ secrets.VAULT_DB_PASSWORD }}
         run: |
-          (ansible-playbook configuration/vault.yml -e VAULT_USER="$VAULT_USER" -e VAULT_PASSWORD="$VAULT_PASSWORD" -e DDNS_LINK="$VAULT_DDNS_LINK" > ~/logs/vault-configure.log 2>&1) &
-
-          ansible-playbook configuration/docker.yml > ~/logs/docker-configure.log 2>&1
+          (ansible-playbook configuration/vault.yml -e VAULT_USER="$VAULT_USER" -e VAULT_PASSWORD="$VAULT_PASSWORD" -e VAULT_DB_USERNAME="$VAULT_DB_USERNAME" -e VAULT_DB_PASSWORD="$VAULT_DB_PASSWORD" -e DDNS_LINK="$VAULT_DDNS_LINK" > ~/logs/vault-configure.log 2>&1) &
 
           (ansible-playbook configuration/development.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME" > ~/logs/development-configure.log 2>&1) &
           (ansible-playbook configuration/production.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME" -e DDNS_LINK="$PRODUCTION_DDNS_LINK" > ~/logs/production-configure.log 2>&1) &
@@ -79,17 +79,27 @@ jobs:
         if: always()
         run: az logout
 
-      - name: Export SSH key
+      - name: Export secrets to Vault
         env:
           VAULT_USER: ${{ secrets.VAULT_USER }}
           VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
           VAULT_URL: ${{ secrets.VAULT_URL }}
           VAULT_SECRET_PATH: ${{ secrets.VAULT_SECRET_PATH }}
+          VAULT_DB_SECRET_PATH: ${{ secrets.VAULT_DB_SECRET_PATH }}
+          DOCKER_DB_USER: ${{ secrets.DOCKER_DB_USER }}
+          DOCKER_DB_PASSWORD: ${{ secrets.DOCKER_DB_PASSWORD }}
         run: |
           sudo apt-get install -y jq curl
           clientToken=$(curl -X POST "$VAULT_URL/v1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")
           ssh_key_content=$(cat ~/.ssh/ansible_key.pem | jq -Rs .)
           curl -X POST "$VAULT_URL/v1/$VAULT_SECRET_PATH" -H "X-Vault-Token: $clientToken" -d "{\"key\": $ssh_key_content}"
+          user=vault
+          host=vault-klasb2c.westeurope.cloudapp.azure.com
+          remoteCommand="sudo apt-get install jq -y && sudo cat ~/vault_keys.json | jq -r '.root_token'"
+          ssh -i ~/.ssh/ansible_key.pem $user@$host $remoteCommand > ~/vault_token
+          clientToken=$(cat ~/vault_token)
+          echo $clientToken
+          curl -X POST "$VAULT_URL/v1/$VAULT_DB_SECRET_PATH" -H "X-Vault-Token: $clientToken" -d "{\"username\": \"$DOCKER_DB_USER\", \"password\": \"$DOCKER_DB_PASSWORD\"}"
 
         # Retrieve SSH key from Vault like so:
         # clientToken=$(curl -X POST "$VAULT_URL/v1/auth/userpass/login/$VAULT_USER" -H "Content-Type: application/json" -d "{\"password\" :  \"$VAULT_PASSWORD\" }" | jq -r ".auth.client_token")

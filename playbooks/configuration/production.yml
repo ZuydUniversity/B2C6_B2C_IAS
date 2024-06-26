@@ -2,10 +2,147 @@
   hosts: production
   become: yes
   tasks:
+    - name: Update packages list
+      apt:
+        update_cache: yes
+
+    - name: Install required packages
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - nginx
+        state: present
+
+    - name: Create directory for Docker GPG key
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Download Docker's official GPG key
+      get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: "0644"
+
+    - name: Add Docker repository to Apt sources
+      shell: |
+        echo \
+          "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+          $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+          tee /etc/apt/sources.list.d/docker.list > /dev/null
+        apt-get update
+
+    - name: Install Docker on system
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
+
     - name: Ensure Docker is running
       service:
         name: docker
         state: started
+
+    - name: Update Dynamic DNS Record
+      shell: curl "{{ DDNS_LINK }}"
+      register: ddns_result
+
+    - name: Check DDNS update result
+      debug:
+        var: ddns_result.stdout
+
+    - name: Create SSL certs directory
+      file:
+        path: "/etc/nginx/certs"
+        state: directory
+
+    - name: Install Certbot
+      apt:
+        name:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+
+    - name: Write temporary Nginx configuration for HTTP
+      copy:
+        content: |
+          server {
+              listen 80;
+              server_name myolink.info.gf;
+
+              location / {
+                root /var/www/html;
+                index index.html;
+              }
+          }
+        dest: "/etc/nginx/sites-available/myolink_temp.conf"
+
+    - name: Enable temporary HTTP site
+      file:
+        src: "/etc/nginx/sites-available/myolink_temp.conf"
+        dest: "/etc/nginx/sites-enabled/myolink_temp.conf"
+        state: link
+
+    - name: Restart Nginx to apply temporary configuration
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Ensure Nginx service is running and enabled
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Obtain SSL certificates from Let's Encrypt
+      command: certbot --nginx -d myolink.info.gf --non-interactive --agree-tos -m 2201483franssen@zuyd.nl
+      register: certbot_result
+      ignore_errors: yes
+
+    - name: Write Nginx configuration file
+      copy:
+        content: |
+          server {
+              listen 80;
+              server_name myolink.info.gf;
+
+              location / {
+                return 301 https://myolink.info.gf;
+              }
+          }
+
+          server {
+              listen 443 ssl;
+              server_name myolink.info.gf;
+
+              ssl_certificate /etc/letsencrypt/live/myolink.info.gf/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/myolink.info.gf/privkey.pem;
+
+              location / {
+                  proxy_pass http://localhost:8080;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection "upgrade";
+              }
+          }
+        dest: "/etc/nginx/sites-available/myolink.conf"
+
+    - name: Enable SSL site
+      file:
+        src: "/etc/nginx/sites-available/myolink.conf"
+        dest: "/etc/nginx/sites-enabled/myolink.conf"
+        state: link
+
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
 
     - name: Create Compose file
       copy:
@@ -17,7 +154,10 @@
               image: snailcape/cipipelinetest
               restart: always
               ports:
-                - 80:5000
+                - 8080:5000
+              networks:
+                - app-network
+
             backend:
               image: ichishihoness/my-backend:latest
               restart: always
@@ -30,6 +170,8 @@
                 DB_PASSWORD: "{{ DB_PASSWORD }}"
                 DB_HOST: db
                 DB_NAME: "{{ DB_NAME }}"
+              networks:
+                - app-network
 
             db:
               image: mariadb:latest
@@ -40,26 +182,20 @@
                 - db_data:/var/lib/mysql
               ports:
                 - 3306:3306
-
-            backup:
-              image: fradelg/mysql-cron-backup
-              restart: always
-              environment:
-                MYSQL_HOST: db
-                MYSQL_PORT: 3306
-                MYSQL_USER: root
-                MYSQL_PASS: "{{ DB_PASSWORD }}"
-                CRON_TIME: "0 3 * * *"  # Daily at 3am
-                BACKUP_DIR: /backups
-              volumes:
-                - db_backup:/backups
-
+              networks:
+                - app-network
+                
             watchtower:
               image: containrrr/watchtower
               restart: always
               volumes:
                 - /var/run/docker.sock:/var/run/docker.sock
               command: --cleanup --interval 300
+              networks:
+                - app-network
+                
+          networks:
+            app-network:
 
           volumes:
             db_data:
@@ -67,6 +203,3 @@
 
     - name: Launch Docker Compose
       ansible.builtin.command: docker compose -f /tmp/dockercompose-file up --detach
-
-    - name: Update Dynamic DNS Record
-      shell: curl $DDNS_LINK
