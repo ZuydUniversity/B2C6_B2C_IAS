@@ -186,17 +186,17 @@
                 - app-network
                 
             backup:
-            image: fradelg/mysql-cron-backup
-            restart: always
-            environment:
-              MYSQL_HOST: db
-              MYSQL_PORT: 3306
-              MYSQL_USER: root
-              MYSQL_PASS: "{{ DB_PASSWORD }}"
-              CRON_TIME: "0 3 * * *"  # Daily at 3am
-              INIT_BACKUP: "1"
-            volumes:
-              - db_backup:/backup
+              image: fradelg/mysql-cron-backup
+              restart: always
+              environment:
+                MYSQL_HOST: db
+                MYSQL_PORT: 3306
+                MYSQL_USER: root
+                MYSQL_PASS: "{{ DB_PASSWORD }}"
+                CRON_TIME: "0 3 * * *"  # Daily at 3am
+                INIT_BACKUP: "1"
+              volumes:
+                - db_backup:/backup
 
             watchtower:
               image: containrrr/watchtower
