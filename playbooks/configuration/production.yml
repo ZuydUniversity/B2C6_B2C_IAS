@@ -51,25 +51,8 @@
         state: started
 
     - name: Update Dynamic DNS Record for myolink.info.gf
-      shell: curl "{{ DDNS_LINK }}?hostname=myolink.info.gf"
-      register: ddns_result_myolink
-
-    - name: Check DDNS update result for myolink.info.gf
-      debug:
-        var: ddns_result_myolink.stdout
-
-    - name: Update Dynamic DNS Record for backend.myolink.info.gf
-      shell: curl "{{ DDNS_LINK }}?hostname=backend.myolink.info.gf"
-      register: ddns_result_backend
-
-    - name: Check DDNS update result for backend.myolink.info.gf
-      debug:
-        var: ddns_result_backend.stdout
-
-    - name: Check DDNS update result
-      debug:
-        var: ddns_result.stdout
-
+      shell: curl "{{ DDNS_LINK }}"
+      
     - name: Create SSL certs directory
       file:
         path: "/etc/nginx/certs"
