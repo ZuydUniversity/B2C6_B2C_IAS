@@ -11,7 +11,7 @@ describe docker_container('cippielinetest:latest') do
 end
 
 # Check if right port is opened (e.g. 80 for HTTP)
-describe port(80) do
+describe port(443) do
   it { should be_listening }
 end
 
