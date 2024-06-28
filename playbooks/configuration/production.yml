@@ -96,8 +96,13 @@
         state: started
         enabled: yes
 
-    - name: Obtain SSL certificates from Let's Encrypt
+    - name: Obtain SSL certificates for frontend from Let's Encrypt
       command: certbot --nginx -d myolink.info.gf --non-interactive --agree-tos -m 2201483franssen@zuyd.nl
+      register: certbot_result
+      ignore_errors: yes
+
+    - name: Obtain SSL certificates for backend from Let's Encrypt
+      command: certbot --nginx -d backend.myolink.info.gf --non-interactive --agree-tos -m 2201483franssen@zuyd.nl
       register: certbot_result
       ignore_errors: yes
 
@@ -140,8 +145,8 @@
               listen 443 ssl;
               server_name backend.myolink.info.gf;
 
-              ssl_certificate /etc/letsencrypt/live/myolink.info.gf/fullchain.pem;
-              ssl_certificate_key /etc/letsencrypt/live/myolink.info.gf/privkey.pem;
+              ssl_certificate /etc/letsencrypt/live/backend.myolink.info.gf/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/backend.myolink.info.gf/privkey.pem;
 
               location / {
                   proxy_pass http://localhost:8000;
