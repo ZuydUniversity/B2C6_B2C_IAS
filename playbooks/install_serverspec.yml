@@ -1,5 +1,5 @@
 ---
-- name: Install Serverspec
+- name: Install Serverspec and required packages
   hosts: all
   become: yes
   tasks:
@@ -15,8 +15,33 @@
           - libssl-dev
         state: present
 
-    - name: Install Serverspec using gem
+    - name: Install Bundler
       gem:
-        name: serverspec
+        name: bundler
         state: present
         user_install: no
+
+    - name: Create Gemfile for Serverspec
+      copy:
+        dest: /home/ubuntu/Gemfile
+        content: |
+          source 'https://rubygems.org'
+          gem 'serverspec'
+          gem 'docker-api'
+          gem 'capybara'
+          gem 'selenium-webdriver'
+          gem 'webdrivers'
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+
+    - name: Install gems from Gemfile
+      command: bundle install
+      args:
+        chdir: /home/ubuntu
+
+    - name: Run Serverspec tests
+      command: bundle exec rspec spec/docker_container_spec.rb
+      args:
+        chdir: /home/ubuntu
+

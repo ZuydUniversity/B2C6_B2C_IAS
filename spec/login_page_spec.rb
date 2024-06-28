@@ -5,7 +5,7 @@ require 'net/http'
 set :backend, :exec
 
 # Define the URL of the login page
-LOGIN_URL = 'https://myolink.info.gf/login'
+LOGIN_URL = 'http://developmentvm1-klasb2c.westeurope.cloudapp.azure.com/login'
 
 # HTTP helper method to get response
 def get_http_response(url)
