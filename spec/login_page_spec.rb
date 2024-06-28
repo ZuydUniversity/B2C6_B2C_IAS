@@ -31,8 +31,16 @@ describe 'Login Page' do
     expect(@body).to match(/<form.*?<\/form>/m)
   end
 
+  it 'contains the personnel number field' do
+    expect(@body).to match(/<input.*?name="personnel_number".*?>/m)
+  end
+
   it 'contains the username field' do
     expect(@body).to match(/<input.*?name="username".*?>/m)
+  end
+
+  it 'contains the email field' do
+    expect(@body).to match(/<input.*?name="email".*?>/m)
   end
 
   it 'contains the password field' do
@@ -55,3 +63,4 @@ describe 'Login Page' do
     expect(@body).to match(/<script.*?src=".*?main.js".*?><\/script>/m)
   end
 end
+
