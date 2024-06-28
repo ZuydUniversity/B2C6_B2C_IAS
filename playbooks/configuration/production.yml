@@ -50,14 +50,9 @@
         name: docker
         state: started
 
-    - name: Update Dynamic DNS Record
+    - name: Update Dynamic DNS Record for myolink.info.gf
       shell: curl "{{ DDNS_LINK }}"
-      register: ddns_result
-
-    - name: Check DDNS update result
-      debug:
-        var: ddns_result.stdout
-
+      
     - name: Create SSL certs directory
       file:
         path: "/etc/nginx/certs"
@@ -101,8 +96,13 @@
         state: started
         enabled: yes
 
-    - name: Obtain SSL certificates from Let's Encrypt
+    - name: Obtain SSL certificates for frontend from Let's Encrypt
       command: certbot --nginx -d myolink.info.gf --non-interactive --agree-tos -m 2201483franssen@zuyd.nl
+      register: certbot_result
+      ignore_errors: yes
+
+    - name: Obtain SSL certificates for backend from Let's Encrypt
+      command: certbot --nginx -d backend.myolink.info.gf --non-interactive --agree-tos -m 2201483franssen@zuyd.nl
       register: certbot_result
       ignore_errors: yes
 
@@ -127,6 +127,29 @@
 
               location / {
                   proxy_pass http://localhost:8080;
+                  proxy_set_header Upgrade $http_upgrade;
+                  proxy_set_header Connection "upgrade";
+              }
+          }
+
+          server {
+              listen 80;
+              server_name backend.myolink.info.gf;
+
+              location / {
+                return 301 https://backend.myolink.info.gf;
+              }
+          }
+
+          server {
+              listen 443 ssl;
+              server_name backend.myolink.info.gf;
+
+              ssl_certificate /etc/letsencrypt/live/backend.myolink.info.gf/fullchain.pem;
+              ssl_certificate_key /etc/letsencrypt/live/backend.myolink.info.gf/privkey.pem;
+
+              location / {
+                  proxy_pass http://localhost:8000;
                   proxy_set_header Upgrade $http_upgrade;
                   proxy_set_header Connection "upgrade";
               }
