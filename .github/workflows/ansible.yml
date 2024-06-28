@@ -52,7 +52,6 @@ jobs:
           (ansible-playbook creation/vault.yml > ~/logs/vault-create.log 2>&1) &
           (ansible-playbook creation/development.yml -e DEVELOPMENT_VMS=${{ github.event.inputs.numberOfDevelopmentVms }} > ~/logs/development-create.log 2>&1) &
           (ansible-playbook creation/production.yml -e PRODUCTION_VMS=${{ github.event.inputs.numberOfProductionVms }} > ~/logs/production-create.log 2>&1) &
-
           wait
 
       - name: Configure VMs
@@ -69,12 +68,10 @@ jobs:
           VAULT_DB_PASSWORD: ${{ secrets.VAULT_DB_PASSWORD }}
         run: |
           (ansible-playbook configuration/vault.yml -e VAULT_USER="$VAULT_USER" -e VAULT_PASSWORD="$VAULT_PASSWORD" -e VAULT_DB_USERNAME="$VAULT_DB_USERNAME" -e VAULT_DB_PASSWORD="$VAULT_DB_PASSWORD" -e DDNS_LINK="$VAULT_DDNS_LINK" > ~/logs/vault-configure.log 2>&1) &
-
           (ansible-playbook configuration/development.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME" > ~/logs/development-configure.log 2>&1) &
           (ansible-playbook configuration/production.yml -e DB_USER="$DOCKER_DB_USER" -e DB_PASSWORD="$DOCKER_DB_PASSWORD" -e DB_NAME="$DOCKER_DB_NAME" -e DDNS_LINK="$PRODUCTION_DDNS_LINK" > ~/logs/production-configure.log 2>&1) &
-
           wait
-      
+
       - name: Log out of Azure
         if: always()
         run: az logout

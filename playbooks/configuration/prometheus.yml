@@ -1,0 +1,147 @@
+- name: Install Prometheus packages
+  hosts: prometheus
+  remote_user: prometheus
+  become: yes
+  tasks:
+    - name: Update apt repository cache
+      apt:
+        update_cache: yes
+
+    - name: Create Prometheus directories
+      become: yes
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - /etc/prometheus
+        - /var/lib/prometheus
+
+    - name: Ensure /tmp directory exists
+      file:
+        path: /tmp
+        state: directory
+
+    - name: Download Prometheus tarball
+      get_url:
+        url: https://github.com/prometheus/prometheus/releases/download/v2.41.0/prometheus-2.41.0.linux-amd64.tar.gz
+        dest: /tmp/prometheus-2.41.0.linux-amd64.tar.gz
+
+    - name: Extract Prometheus tarball
+      unarchive:
+        src: /tmp/prometheus-2.41.0.linux-amd64.tar.gz
+        dest: /tmp
+        remote_src: yes
+        creates: /tmp/prometheus-2.41.0.linux-amd64
+    
+    - name: Move prometheus binary
+      command: mv /tmp/prometheus-2.41.0.linux-amd64/prometheus /usr/local/bin/prometheus
+      args:
+        creates: /usr/local/bin/prometheus
+
+    - name: Move promtool binary
+      command: mv /tmp/prometheus-2.41.0.linux-amd64/promtool /usr/local/bin/promtool
+      args:
+        creates: /usr/local/bin/promtool
+
+    - name: Change owner of /usr/local/bin/prometheus to prometheus
+      ansible.builtin.file:
+        path: /usr/local/bin/prometheus
+        owner: prometheus
+        group: prometheus
+
+    - name: Change owner of /usr/local/bin/promtool to prometheus
+      ansible.builtin.file:
+        path: /usr/local/bin/promtool
+        owner: prometheus
+        group: prometheus
+
+    - name: Change owner of /etc/prometheus recursively to prometheus
+      ansible.builtin.file:
+        path: /etc/prometheus
+        state: directory
+        owner: prometheus
+        group: prometheus
+        recurse: yes
+
+    - name: Change owner of /var/lib/prometheus recursively to prometheus
+      ansible.builtin.file:
+        path: /var/lib/prometheus
+        state: directory
+        owner: prometheus
+        group: prometheus
+        recurse: yes
+
+    - name: Move consoles directory to /etc/prometheus
+      ansible.builtin.command:
+        cmd: mv consoles /etc/prometheus/
+      args:
+        creates: /etc/prometheus/consoles
+    
+    - name: Move console_libraries directory to /etc/prometheus
+      ansible.builtin.command:
+        cmd: mv console_libraries /etc/prometheus/
+      args:
+        creates: /etc/prometheus/console_libraries
+    
+    - name: Move prometheus.yml to /etc/prometheus/prometheus.yml
+      ansible.builtin.command:
+        cmd: mv prometheus.yml /etc/prometheus/prometheus.yml
+      args:
+        creates: /etc/prometheus/prometheus.yml
+    
+    - name: Change owner of /etc/prometheus/consoles recursively to prometheus
+      ansible.builtin.file:
+        path: /etc/prometheus/consoles
+        state: directory
+        owner: prometheus
+        group: prometheus
+        recurse: yes
+    
+    - name: Change owner of /etc/prometheus/console_libraries recursively to prometheus
+      ansible.builtin.file:
+        path: /etc/prometheus/console_libraries
+        state: directory
+        owner: prometheus
+        group: prometheus
+        recurse: yes
+    
+    - name: Change owner of /etc/prometheus/prometheus.yml to prometheus
+      ansible.builtin.file:
+        path: /etc/prometheus/prometheus.yml
+        owner: prometheus
+        group: prometheus
+
+- name: Setup Prometheus Service
+  hosts: prometheus
+  remote_user: prometheus
+  become: yes
+  tasks:
+    - name: Create systemd service file for Prometheus
+      copy:
+        content: |
+          [Unit]
+          Description=Prometheus
+          Wants=network-online.target
+          After=network-online.target
+
+          [Service]
+          User=prometheus
+          Group=prometheus
+          Type=simple
+          ExecStart=/usr/local/bin/prometheus --config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/var/lib/prometheus/ --web.console.templates=/etc/prometheus/consoles --web.console.libraries=/etc/prometheus/console_libraries
+
+          [Install
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/prometheus.service
+        mode: "0755"
+
+    - name: Reload systemd to apply the new service
+      systemd:
+        daemon_reload: yes
+
+    - name: Start and enable Prometheus service
+      systemd:
+        name: prometheus
+        enabled: yes
+        state: started
