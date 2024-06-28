@@ -80,6 +80,7 @@ jobs:
         run: az logout
 
       - name: Export secrets to Vault
+        continue-on-error: true
         env:
           VAULT_USER: ${{ secrets.VAULT_USER }}
           VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
