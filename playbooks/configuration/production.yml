@@ -193,7 +193,7 @@
                 DB_PASSWORD: "{{ DB_PASSWORD }}"
                 DB_HOST: db
                 DB_NAME: "{{ DB_NAME }}"
-                EMAIL_PASSWORD: "{{ NOREPLY_PASSWORD }}"
+                EMAIL_PASSWORD: "{{ EMAIL_PASSWORD }}"
               networks:
                 - app-network
 
@@ -218,13 +218,11 @@
               networks:
                 - app-network
                 
-            postfix:
-              image: catatnight/postfix
+            smtp:
+              image: namshi/smtp
               environment:
-                - MAIL_DOMAIN=myolink.info.gf
-                - SMTP_LOGIN=noreply:{{ secrets.NOREPLY_PASSWORD }}
-                - USE_TLS=y
-                - RELAY_NETWORKS=127.0.0.0/8 10.0.0.0/8
+                - MAIL_FROM=noreply@myolink.info.gf
+                - RELAY_PASSWORD="{{ EMAIL_PASSWORD }}"
               ports:
                 - 25:25
               restart: always
