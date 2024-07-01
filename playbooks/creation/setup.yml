@@ -74,6 +74,12 @@
             access: Allow
             priority: 1004
             direction: Inbound
+          - name: SMTP
+            protocol: Tcp
+            destination_port_range: 25
+            access: Allow
+            priority: 1000
+            direction: Inbound
           - name: Prometheus
             protocol: Tcp
             destination_port_range: 9090
