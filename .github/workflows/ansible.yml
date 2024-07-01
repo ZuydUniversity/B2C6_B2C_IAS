@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: python setup
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
@@ -46,7 +46,7 @@ jobs:
         working-directory: ./playbooks
         run: ansible-playbook creation/setup.yml
 
-      - name: Create Vms
+      - name: Create VMs
         working-directory: ./playbooks
         run: |
           (ansible-playbook creation/vault.yml > ~/logs/vault-create.log 2>&1) &
@@ -114,12 +114,11 @@ jobs:
           echo -e "\e[34m  | || |_| || |    | |  | ____| ____|\e[0m"
           echo -e "\e[34m   \__)___/ |_|    |_|  |_____)_____)\e[0m"
 
-          run-serverspec-tests:
+  run-serverspec-tests:
     runs-on: ubuntu-latest
     needs: Restore_VMs
     steps:
-      - name: Haal de code uit de repository op
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install Ruby
         uses: actions/setup-ruby@v1
@@ -142,8 +141,7 @@ jobs:
     needs: run-serverspec-tests
     if: failure()
     steps:
-      - name: Haal de code uit de repository op
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Send Slack notification
         uses: slackapi/slack-github-action@v1.26.0
