@@ -193,6 +193,7 @@
                 DB_PASSWORD: "{{ DB_PASSWORD }}"
                 DB_HOST: db
                 DB_NAME: "{{ DB_NAME }}"
+                EMAIL_PASSWORD: "{{ EMAIL_PASSWORD }}"
               networks:
                 - app-network
 
