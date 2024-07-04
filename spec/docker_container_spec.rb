@@ -46,7 +46,11 @@ end
 
 # Check if backend service gives the right response
 describe command('curl http://localhost:80') do
-  its(:stdout) { should match /Expected text from backend service/ }  # Replace with actual expected text
+  its(:stdout) { should match /Joep Doe/ }
+  its(:stdout) { should match /10 jaar/ }
+  its(:stdout) { should match /JDM \(monocyclische\)/ }
+  its(:stdout) { should match /x medicijn/ }
+  its(:stdout) { should match /Afspraken: 4/ }
   its(:exit_status) { should eq 0 }
 end
 
