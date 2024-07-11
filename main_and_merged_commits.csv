@@ -1,0 +1,175 @@
+Author	Date	Commit Hash	Commit Message	Branch
+Cas Olischläger\t2024-06-28 13:24:15 +0200\td3ec03b4cf9c86448ecd65c74bf6b8b3700e2d6a\tMerge pull request #23 from ZuydUniversity/nginx\tmain
+Tristan Franssen\t2024-06-28 13:20:35 +0200\t9e0d805de35d73b4475ed2ac83acc144a00c27a0\tMerge pull request #26 from ZuydUniversity/secret-upload-fix\tmain
+Cas Olischläger\t2024-06-28 13:16:32 +0200\tc92911feb385d87be0ed28dbef079cacb544d74c\tchore: Add continue-on-error flag for exporting secrets to Vault\tmain
+Tristan Franssen\t2024-06-28 12:43:13 +0200\t8703a8ae5f138f3c2ce47ab7dfc86e54ffb3413b\tAdded seperate certificate for backend\tmain
+Tristan Franssen\t2024-06-28 12:42:11 +0200\t750faa7ee78dfab5ea7a4cff6e31c22d57a93d70\tChanged url update\tmain
+Tristan Franssen\t2024-06-26 14:50:15 +0200\t119acdd174997f7ca5682374c3a2cb298c2d9981\tAdded redirect backend\tmain
+Cas Olischläger\t2024-06-26 14:15:48 +0200\tdcad31811000bc3cba78718fe172f6a1b40f00bf\tchore: Update SSH key retrieval in Ansible workflow\tmain
+Cas Olischläger\t2024-06-26 11:36:04 +0200\t8500c0587b67fbe70d49eae1aec825ce75534f77\tMerge pull request #21 from ZuydUniversity/nginx\tmain
+Tristan Franssen\t2024-06-25 19:17:17 +0200\t7a61e83716fd45db6d294fc5d68a9489c9d570d6\tMade sure http server is online before requesting certificate\tmain
+Tristan Franssen\t2024-06-25 19:01:32 +0200\tc69f7816994248455a7db1ea4730e3fda863233a\tChanged certbot install\tmain
+Tristan Franssen\t2024-06-25 18:51:42 +0200\tcdc72ef131b20fb0f3e050069e661423e4820250\tChanged name port\tmain
+Tristan Franssen\t2024-06-25 18:48:16 +0200\tbc5a49f948892f2a6890d001d4b53143b01f5e40\tRemoved character in random place\tmain
+Tristan Franssen\t2024-06-25 14:56:28 +0200\t41ce05648012a61247ccedbb075e46ec50d2c08d\tAdded network to watchtower\tmain
+Tristan Franssen\t2024-06-25 14:53:33 +0200\t0e0d3464ad41a3bd5375d78016debc6555bb2821\tImplemented redirect\tmain
+Tristan Franssen\t2024-06-25 14:46:57 +0200\t0a299e008b5b2ab215f72ecdf34897ee73ec1c1b\tAdded let's encrypt\tmain
+Tristan Franssen\t2024-06-25 14:25:57 +0200\t763603b92d0ca41d894391d583495507f4066ae8\tMerge branch 'nginx' of https://github.com/ZuydUniversity/B2C6_B2C_IAS into nginx\tmain
+Tristan Franssen\t2024-06-25 14:25:38 +0200\t4b451bd91dcc0df3ab53ad512d9f7a30292bd3d2\tAdded local network\tmain
+Cas Olischläger\t2024-06-25 14:14:42 +0200\t4b9a19b892f5fef8f2157a2d48c9606ccfd906b5\tHTTPS port open gezet\tmain
+Cas Olischläger\t2024-06-25 13:13:06 +0200\t2add605cb86e875aed2ef9fc61d63085f83436fe\tdebug print\tmain
+Cas Olischläger\t2024-06-25 13:11:24 +0200\t8e603822937e4c5b959cc76a88c7f63131591992\thotfix for ssh key upload database credential upload is still broken!\tmain
+Tristan Franssen\t2024-06-25 12:55:30 +0200\t27a1a97e26ce7cc7ac0968cee4498a132aea9ab3\tChanged ssl command\tmain
+Tristan Franssen\t2024-06-25 12:18:23 +0200\tcb742228d043cabeb4a741a24b9b7bc5e8b2bbaf\tChanged file\tmain
+Tristan Franssen\t2024-06-25 12:02:06 +0200\t98d354aa4259564b96549c4be3d102e57c06f26f\tChanged file path\tmain
+Tristan Franssen\t2024-06-25 11:50:12 +0200\t6d3bfe329c2ca4619a5095ded8ff5ebc7b4a116a\tMoved nginx outside docker\tmain
+Tristan Franssen\t2024-06-25 11:20:03 +0200\t29e8c5c4bad4322b15c6ec85e6fe1a2e7842ba47\tMerge branch 'nginx' of https://github.com/ZuydUniversity/B2C6_B2C_IAS into nginx\tmain
+Tristan Franssen\t2024-06-25 11:19:46 +0200\t3a6c39013271f4cf08f5dcbc5dfa420faf0cb6ae\tChanged file folder\tmain
+Cas Olischläger\t2024-06-25 10:39:36 +0200\t31c27b30f36b36a75a39b030f8ca48872cfbeeca\tfixed upload of secrets to vault\tmain
+Tristan Franssen\t2024-06-25 10:14:25 +0200\t940cb5dc4e44e35d39d075a53cf0982779c15000\tCreated network\tmain
+Tristan Franssen\t2024-06-25 09:50:39 +0200\te0725ea378865cf117944e4e709e4f9f389edc98\tAdded local network\tmain
+Tristan Franssen\t2024-06-25 09:22:41 +0200\t4aee0f7c156accec4dab1d36367db64d4bb892f1\tChanged configuration\tmain
+Tristan Franssen\t2024-06-24 22:32:28 +0200\t38a43b28c595dbb49c4aff7472247bbe4e0c117b\tChanged nginx settings\tmain
+Tristan Franssen\t2024-06-24 22:16:08 +0200\t062cdab14447bd1811a5a4bd2a17f8d2750ed80d\tChanged domain name\tmain
+Tristan Franssen\t2024-06-24 20:19:30 +0200\t3a655723e90f66af920b27dfa730450fcc1fe9a6\tChanged install\tmain
+Tristan Franssen\t2024-06-24 19:52:21 +0200\t1f2b2e0d01c6f728bb12c786bb36ba4fbc034cb8\tFixed indentation\tmain
+Tristan Franssen\t2024-06-24 19:29:48 +0200\t1d0b311676aebe896038688eddf62217bea1f570\tChanged way of settingup nginx\tmain
+Tristan Franssen\t2024-06-24 17:59:41 +0200\ta80f8b9d544efc9c7b13c816e46ff73e3327ac24\tChanged path again\tmain
+Tristan Franssen\t2024-06-24 16:41:05 +0200\tb5f06a25b55d14fc2da42ed6f5f96ff15db045a7\tRemoved copy\tmain
+Tristan Franssen\t2024-06-24 16:24:55 +0200\t31a79f87be415809147c4099086e8cfb596abb61\tChanged path\tmain
+Tristan Franssen\t2024-06-24 16:07:45 +0200\tf4706c4d6330769723844d2875eca18c2378a3bc\tChanged filepath\tmain
+Tristan Franssen\t2024-06-24 15:07:43 +0200\tb9833cfc53b35ef52af0593946d9a78604656626\tAdded file copy\tmain
+Tristan Franssen\t2024-06-24 14:55:19 +0200\tda89dd2eab3128d9acd82f49ca77034d7c26d00c\tChanged openssl to command\tmain
+Tristan Franssen\t2024-06-24 14:40:48 +0200\t514ef863f6be3fdcfb3123d6810bcb0bbd20155f\tAdded selfsigned to provider\tmain
+Tristan Franssen\t2024-06-24 13:18:54 +0200\t0f92db05a5c127bd041f117eb900d60536d07644\tMade few changes\tmain
+Tristan Franssen\t2024-06-24 12:47:06 +0200\t6d3f9ad12e2496887b5d2fcffd5ebbe5a0077fb5\tChanged directory\tmain
+Tristan Franssen\t2024-06-24 11:57:35 +0200\t1b16854661d07a243b654cbea44665e036daaf51\tFixed error\tmain
+Tristan Franssen\t2024-06-24 11:34:09 +0200\tfc0bd90447f640312ab7faf09156fde99a93bf13\tChanged path file nginx docker\tmain
+Tristan Franssen\t2024-06-24 11:18:04 +0200\tb12181a8b19c0ee309be54e1c7cd0f517f51cf13\tMerge branch 'nginx' of https://github.com/ZuydUniversity/B2C6_B2C_IAS into nginx\tmain
+Tristan Franssen\t2024-06-24 11:17:48 +0200\tc42b0bec5ea3195e5ca5a22e1865057e0f130b3e\tMoved nginx to docker\tmain
+Cas Olischläger\t2024-06-24 11:07:04 +0200\t79da0e588665210ae54c4f3f810fcf53e71334e6\tadded credntial upload to vault\tmain
+Tristan Franssen\t2024-06-24 10:56:50 +0200\tc90aa4dac540b82542935d8a986116622bef769b\tChanged paths\tmain
+Tristan Franssen\t2024-06-24 10:36:20 +0200\t1ac32424b1902257da72022905174000f886291a\tChanged path and removed check\tmain
+Tristan Franssen\t2024-06-24 10:12:03 +0200\t4b826d211d869c5461a280ccca3e1b6d5a9d6e11\tChanged nginx conf and added check\tmain
+Tristan Franssen\t2024-06-24 09:56:49 +0200\tfb7bffcc9d62bf8b4cacf32d04f5f6337a2e67e0\tChanged file path\tmain
+Tristan Franssen\t2024-06-24 09:37:17 +0200\tad2703c62a7d36b89afdb42089edf7609407f269\tChanged openssl generation\tmain
+Tristan Franssen\t2024-06-24 09:26:51 +0200\tca8cf63960c0a650a53dcdcefe8bb9ceda3c1b6d\tChanged certbot to openssl\tmain
+Cas Olischläger\t2024-06-24 00:58:39 +0200\t9fefdc22487fbcc80fddb373adb7c4def8553735\tchore: Update NGINX configuration for HTTPS support\tmain
+Cas Olischläger\t2024-06-24 00:36:06 +0200\t7747177c6dd515c5ad2d8dea52ec8a3438d9a75c\trestart nginx after config\tmain
+Cas Olischläger\t2024-06-24 00:18:41 +0200\t47dc629c542407ffc2c0b286816281fba665fada\tconfig test\tmain
+Cas Olischläger\t2024-06-23 23:45:00 +0200\t884e2a138b5298b53fb41a55b71f502d53b6bf4a\tmoved config file\tmain
+Cas Olischläger\t2024-06-23 23:33:14 +0200\t49b49c95486d2816a32b1b784bce194165fa2cc6\tedited config path\tmain
+Cas Olischläger\t2024-06-23 23:29:31 +0200\t5bc78b52eef2a423b979e51d153383cec0059827\tadded a space ;-;\tmain
+Cas Olischläger\t2024-06-23 23:17:08 +0200\tc230fdb2a1ae7c59a56f74d1b8a8ccf3470f4545\tproxy setup to avoid port conflicts\tmain
+Cas Olischläger\t2024-06-23 22:45:07 +0200\t9a5efac085d5b2d095c540939a75872be2d3a31e\tadded database volume back\tmain
+Tristan Franssen\t2024-06-23 22:34:54 +0200\t76b2481ff81713b61f055bfee6ef6fa5a57b22d0\tRemoved backup as it was not working\tmain
+Tristan Franssen\t2024-06-23 22:27:11 +0200\t484a7cb1f8d1fa757b26e4b2b6106f853a6f96ca\tFixed and returned database backup\tmain
+Tristan Franssen\t2024-06-23 22:25:08 +0200\tb39a4fa29569d93b372d8891a9d7db2e762ec439\tRemoved backup temp\tmain
+Tristan Franssen\t2024-06-23 22:05:15 +0200\t76fb83b63f92e47c8d6d76d2cde6ca18199d2d63\tMoved nginx\tmain
+Tristan Franssen\t2024-06-23 21:22:32 +0200\tde9c1df1af51126332d025182a1020c6f3c16fb8\tMoved DNS\tmain
+Cas Olischläger\t2024-06-23 21:14:25 +0200\tc7f09c303f29e8d810da310e510ec3de09264703\tvault database user are now secrets\tmain
+Cas Olischläger\t2024-06-23 21:01:43 +0200\tf6ab74b872d678ca802145c325499c586e7c6ccf\tDDNS possible fix\tmain
+Cas Olischläger\t2024-06-23 20:58:04 +0200\tade50df8db261af96ff4615091c142a17242aa36\tDDNS step verplaatst\tmain
+Tristan Franssen\t2024-06-23 20:28:10 +0200\tc4f2c31161389c8e905fff3332993fbc982b8d4f\tChanged port\tmain
+Tristan Franssen\t2024-06-23 20:03:24 +0200\t0a31a5c054ace8ffac050cd263915fdfeea281cd\tFixed error\tmain
+Tristan Franssen\t2024-06-23 18:53:13 +0200\t54b9b1f5a715e14872fba93cfe4bbd2bd2debd19\tChanged port\tmain
+Tristan Franssen\t2024-06-23 18:32:56 +0200\t1bbc51545775b253201a957cae9c07ac39fb2584\tFixed naming\tmain
+Tristan Franssen\t2024-06-23 16:58:50 +0200\t4de639a2ba9b1e61cf3d37f1bec2c0bb4f223f45\tRemoved need for docker.yml will remove file later\tmain
+Tristan Franssen\t2024-06-23 16:37:02 +0200\t25987a8483d40e5f24e1b5412a5e933d7ddcd908\tRemoved docker confige and added vault confige\tmain
+Tristan Franssen\t2024-06-23 16:30:53 +0200\t47a78e8382ec008b4c6766f1e56f3c68af623358\tRemoved vault configuration\tmain
+Tristan Franssen\t2024-06-23 16:18:54 +0200\t5709153838d459e4a843e63554f615f28adb65ba\tAdded back docker and vault config\tmain
+Tristan Franssen\t2024-06-23 16:01:00 +0200\t5afd731f2e0020c9dbefc2361af8010f9d38ee3f\tOnly configures production vm\tmain
+Tristan Franssen\t2024-06-23 15:50:59 +0200\tacd718facfd8d48bcd8ae17e1be4f84d2d618765\tOnly configures production vm\tmain
+Tristan Franssen\t2024-06-23 15:16:53 +0200\t2dbf8d9dab93ec17b2d8b34ce353cdd2598453a0\tRemoved logging to file made it log to console\tmain
+Tristan Franssen\t2024-06-23 15:06:41 +0200\t07f5634002b6b181c880f12f7e844ec42173ad91\tTried to fix error\tmain
+Tristan Franssen\t2024-06-23 13:11:21 +0200\t00eb10caa813585bc6c4deb266462dbca4db356e\tRemoved nginx\tmain
+Tristan Franssen\t2024-06-22 19:16:55 +0200\t323a64df80bb1bf1030d788a00604b91097f5f42\tMade change to certificate generation\tmain
+Tristan Franssen\t2024-06-22 18:02:29 +0200\t4bd26619d8aec5acbff9e07a666a52d3050d8765\tMerge branch 'nginx' of https://github.com/ZuydUniversity/B2C6_B2C_IAS into nginx\tmain
+Tristan Franssen\t2024-06-22 18:00:54 +0200\tb7666920cfc61918c4f2d91f008cdb3d80886c39\tMade few changes\tmain
+Cas Olischläger\t2024-06-22 17:29:55 +0200\tcb11809dfb0157de4f29f758cfeca7103b209410\tdatabase user policy patch\tmain
+Tristan Franssen\t2024-06-22 17:10:14 +0200\tbc3d388e4c5c1841a2ce8dde19585d258118031a\tMerge branch 'main' of https://github.com/ZuydUniversity/B2C6_B2C_IAS into nginx\tmain
+Tristan Franssen\t2024-06-22 17:09:53 +0200\tca162eee7da7abef7ea0a127d4177425399f7dae\tMerged\tmain
+Tristan Franssen\t2024-06-22 17:08:36 +0200\t24b04c75ab1aef741a31567fd7edc0b3c0442729\tChanged login back\tmain
+Cas Olischläger\t2024-06-22 16:40:09 +0200\t464063e98234e3bb6aeb8d18f5a7b5c398105db4\ttest  with different subscription\tmain
+Tristan Franssen\t2024-06-22 15:52:43 +0200\t76968ae33e14f6f5690e6bd5a5ad8eddf34a7f6f\tChanged to id instead of name for subscription\tmain
+Tristan Franssen\t2024-06-22 13:09:56 +0200\t9a3afd62e20112555d7167a9d265a341086842c0\tMade little changes\tmain
+Tristan Franssen\t2024-06-22 12:15:37 +0200\t118eda469849fafaca3b183f27d2c431720a6150\tRemoved login check\tmain
+Tristan Franssen\t2024-06-22 11:47:22 +0200\t408891a58fc6a181425d20e5aa238ff7dec8c051\tAdded login check\tmain
+Tristan Franssen\t2024-06-21 15:13:37 +0200\t59b17efc6ee4f2a6abdd9c8e3e62440f08beaf76\tfixed production generation\tmain
+Tristan Franssen\t2024-06-21 14:38:25 +0200\tee8039b8fcd562ae778407fa337bfb9064cfb916\tAdded nginx\tmain
+Raffelke\t2024-06-21 12:20:28 +0000\t7d2a227ac0a4d218ea95dc7cc47fa004e02a8d77\tMerge pull request #20 from ZuydUniversity/backupdatabase1\tmain
+Raffelke\t2024-06-21 14:14:06 +0200\t0a8f74d59eacd127b702c15bd3c7faeb2bff2063\tdatabase backup\tmain
+Cas Olischläger\t2024-06-20 14:25:53 +0200\tb1596780a141dc679ea4cbb7a531184e15070482\tMerge pull request #17 from ZuydUniversity/ddns-setup\tmain
+Cas Olischläger\t2024-06-19 17:04:08 +0200\t876a30f2470a10e66c1132ed4585e97da1de26df\tDDNS links toegevoegd Deze worden via Github secrets in de VMs geplaatst waarna ze een request doen om het ip adres te updaten.\tmain
+Cas Olischläger\t2024-06-19 15:30:42 +0200\ta512703dca77bc4362f9b7c83b8d79011ad3ce3c\tMerge pull request #16 from ZuydUniversity/15-ias-repo-refactoren\tmain
+Cas Olischläger\t2024-06-19 15:12:32 +0200\t42a66f3af829da89e2c43938f163d0e9ff8eea97\tchore: Update Vault URL in Ansible workflow\tmain
+Cas Olischläger\t2024-06-19 14:56:18 +0200\tdc4183418ca26b055cc2deb9c9667f0d10d453d3\tTestomgevingen weggehaald na succesvolle testen\tmain
+Cas Olischläger\t2024-06-19 13:59:59 +0200\te89ea1ce0661cb8f2a929a95a656c082ed82c148\tproductieomgeving weggehaald uit tests\tmain
+Cas Olischläger\t2024-06-19 13:40:51 +0200\t64f135f7694474e0ce746a43f3c214dfcd731c24\tchore: Update working directory for configuring VMs in Ansible workflow\tmain
+Cas Olischläger\t2024-06-19 13:25:46 +0200\t724b0bfa06958a3eb3a5b67ce07f3128586175a8\toverlapping DNS zone fix\tmain
+Cas Olischläger\t2024-06-19 13:18:13 +0200\t7b0518ef7f7b11ebe4539e4c430d2f884be1f9ce\tEigen Azure account toegevoegd voor testen\tmain
+Cas Olischläger\t2024-06-19 13:10:51 +0200\t43898067e2dfac9f9f177e54db946eb3cf9d3a4e\tRefactor Grote playbooks zijn opgesplitst waardoor synchrone executie mogelijk is.\tmain
+Cas Olischläger\t2024-06-15 16:44:37 +0200\t5431a0974e8619a2bea6850f09124aef3711239f\tMerge pull request #13 from ZuydUniversity/keyvault\tmain
+Cas Olischläger\t2024-06-14 16:46:44 +0200\te458333891af4c6f7e8014c9d3a16e137c5907fc\tnu echte fix voor de login issues\tmain
+Cas Olischläger\t2024-06-14 16:35:58 +0200\t4d8673e2c929bf68e598817a79eb6de0e5ba5b6c\tchore: Add remote_user to Vault configuration playbook\tmain
+Cas Olischläger\t2024-06-14 16:00:51 +0200\t1ae16b2fac69f9ecd4a26e492047103a6e58e752\tdns name hotfix\tmain
+Cas Olischläger\t2024-06-14 15:38:16 +0200\t03efee9cf5a5153d20f05e3c528c0615ea1272ad\tchore: Update Ansible playbook to configure Azure credentials and export SSH key\tmain
+Cas Olischläger\t2024-06-14 11:52:25 +0200\t42ffae74c3551274bb55c203d62411bdf4b986b9\tchore: Add 'vault' conditional group to dynamic inventory for Azure RM\tmain
+Cas Olischläger\t2024-06-14 10:35:07 +0200\t30a23b7415f686be16dcb0dd0f1d2bd48b583abf\tMerge pull request #12 from ZuydUniversity/watchtower\tmain
+Tristan Franssen\t2024-06-13 10:45:15 +0200\t8dd96eb0c92711d65a4d7ad79d4b3e38c2e24154\tFixed typo\tmain
+Tristan Franssen\t2024-06-12 13:59:37 +0200\t6ae109cf45f56a2f5e7b97a021a46a301d5c4f71\tAdded watchtower to yml\tmain
+Cas Olischläger\t2024-06-05 14:37:10 +0200\t5e9db996551430e76fd665cbe1cdf7fed292a8dc\tMerge pull request #11 from ZuydUniversity/wiki-images\tmain
+Cas Olischläger\t2024-06-05 14:34:19 +0200\ta8baabdd8d56a7743a9e2dad8216890411c9a892\tadded image for wiki\tmain
+Cas Olischläger\t2024-06-05 13:25:43 +0200\t875ac3690dcaf9cc0cd8d6c643bf337732b98924\tMerge pull request #10 from ZuydUniversity/sorry-dit-is-de-echte-fix\tmain
+Cas Olischläger\t2024-06-05 10:02:58 +0200\t62349e123b5eb9082e7814596c19f5c7c90a2fbc\tchore: Update Ansible playbook to enable Docker on development and production VMs\tmain
+Cas Olischläger\t2024-06-05 09:49:52 +0200\t44d3efca05473fb31e10d0678c40561c6bebe378\tchore: Update Docker Compose file paths in Ansible playbook\tmain
+Cas Olischläger\t2024-06-04 22:57:04 +0200\t42888807d7d63a61c0932fe066cabc951eedabdc\tNu werkt de grouping perfect\tmain
+Cas Olischläger\t2024-06-04 22:11:55 +0200\t5c77607b8204154a3d11dbacfa3a538d72545924\tchore: Update Ansible playbook to use dynamic inventory without environment tags\tmain
+Cas Olischläger\t2024-06-04 19:59:42 +0200\t6e53b0a29c1f7dc49282debbc4f89fd7cc7ae67a\tchore: Update Ansible playbook to use dynamic inventory with environment tags\tmain
+Cas Olischläger\t2024-06-04 19:36:26 +0200\tce0ab26f07d033f33985c8e53de37a708aff0f19\tchore: Remove unused code in azure_rm.yml playbook\tmain
+Cas Olischläger\t2024-06-04 19:27:20 +0200\tc76d2ec9849b27ecd44bd96926d0f80533d18cb8\tchore: Update domain name label in create_vms.yml playbook\tmain
+Norayr Gocer\t2024-06-04 19:20:01 +0200\te245976bd89edbfc9ed26afd19a04b76f356eb7c\tMerge pull request #9 from ZuydUniversity/hopelijk-echte-fix\tmain
+Cas Olischläger\t2024-06-04 19:18:45 +0200\tb40b56b430d107a40c210db55dcbb56a90b06468\tchore: Update Azure playbook to handle dynamic inventory with environment tags\tmain
+Norayr Gocer\t2024-06-04 19:07:34 +0200\tec5d63e39056527c6d01d04921bc62d649c50c6d\tMerge pull request #8 from ZuydUniversity/fix-voor-workflow\tmain
+Cas Olischläger\t2024-06-04 19:05:08 +0200\te868dde5a2a119d54f476c12c50921dd43cb9cc1\tchore: Update Docker image in Ansible playbook for configuring VMs\tmain
+David Beljaars\t2024-06-04 18:46:11 +0200\tcbd6989dd3f80f470a12890c720ecabe332028b3\tMerge pull request #6 from ZuydUniversity/configure-vm-ansible\tmain
+Cas Olischläger\t2024-06-04 17:50:08 +0200\ta10df6f216bd402da38f670be273d4df6acb8986\tDevelopment- en productieomgevingen in playbooks. Alle tasks zijn opgesplits in meerdere plays in elk playbook om zo een helderdere flow te krijgen. Ook kan je nu input geven in de github action voor meerdere VM's tegelijk op te zetten.\tmain
+Jeroen S\t2024-06-04 09:28:26 +0200\teb810c98fc554c72b68a6a4f9261623bd0dc642a\tMerge pull request #5 from ZuydUniversity/configure-vm-ansible\tmain
+Cas Olischläger\t2024-06-04 09:22:49 +0200\t0d88ee25d1f840689e05fd2dcdcaedfa08d2d562\tupdated workflow to only run manually\tmain
+Cas Olischläger\t2024-06-02 23:00:08 +0200\t9f08354b1af1657ef7403229c7372dc0c7b8f63b\tff zo omdat accept traag gaat\tmain
+Cas Olischläger\t2024-06-02 20:54:59 +0200\t35a37a3579cdb918b5d54abd328a6d88a5d1bc0d\tchore: Update Ansible playbook to configure VMs with Docker secrets\tmain
+Cas Olischläger\t2024-06-02 20:48:14 +0200\tb9ee6469f67b1300b2195839c3d47ed741d964fd\tchore: Add ignore_unreachable flag to Ansible playbook for configuring VMs\tmain
+Cas Olischläger\t2024-06-02 20:22:54 +0200\t4087dc9630a2542636e39c1a8e786d41a7c073df\tchore: Update Docker database configuration in Ansible playbook\tmain
+Cas Olischläger\t2024-06-02 20:13:55 +0200\t748d8b171d56cc4753195d3b53f5dfdcbe9c3bf3\tchore: Update Network Security Group rules in Ansible playbook\tmain
+Cas Olischläger\t2024-06-02 20:06:28 +0200\tcdc65f5f5d9619b0b423fd5e39f1eac438a4342b\tchore: Update Network Security Group rules in Ansible playbook\tmain
+Cas Olischläger\t2024-06-02 20:02:43 +0200\t4811ab586963b3d0bc1937e1b00eea64ae17c6df\tchore: Update Network Security Group rules in Ansible playbook\tmain
+Cas Olischläger\t2024-06-02 19:56:13 +0200\t61c81ee31c35343033a793a4cb39c18b5e86e01e\tchore: Update Ansible playbook to configure VMs with Docker secrets\tmain
+Cas Olischläger\t2024-05-31 14:57:45 +0200\tdb57a3d4b7e28f73ff74c5ef1f5a04a3c496fcda\tchore: Update Ansible playbook task names for creating and configuring VMs\tmain
+Cas Olischläger\t2024-05-31 14:53:37 +0200\td3af7e0a0504477f92ade3dc58e362ad18a38733\tchore: Update Ansible playbook task names for creating and configuring VMs\tmain
+Cas Olischläger\t2024-05-31 14:53:15 +0200\t8aaa1da06c3d8dc988d973375e09593af5332661\tchore: Update working directory for Ansible playbook execution\tmain
+Cas Olischläger\t2024-05-31 14:46:56 +0200\tc7cb0f8a2d4f41de94e300204dd2cf3b9a33e19e\tchore: Update Azure credentials configuration for Ansible deployment\tmain
+Cas Olischläger\t2024-05-31 13:44:41 +0200\tb52bc7a89c6977279104f85256701e2bc48723de\trefactor: Improve Docker installation process and add test for hello-world image\tmain
+Cas Olischläger\t2024-05-31 13:31:13 +0200\tf5304d4555b8fcd26ddbaf57e7cfab3ed3ed2b04\tchore: Update Docker installation process\tmain
+Cas Olischläger\t2024-05-31 13:07:01 +0200\ta1d641f23870f74cd4a8280c049b56b73ca8a109\trename created vm\tmain
+Cas Olischläger\t2024-05-31 13:05:20 +0200\t7c413723fad1208f6bac95471e763d01d3e5d7cb\tconfiguratie van de gemaakte VMs\tmain
+Jeroen S\t2024-05-30 15:17:10 +0200\tc107997bc240e775d81902a4df06468832a089a3\tMerge pull request #4 from ZuydUniversity/github-acttion-fix\tmain
+Cas Olischläger\t2024-05-30 15:08:52 +0200\t2e57073facae1290494ae2198911f23b4a3b1af2\tnu de echte fix fr fr\tmain
+Cas Olischläger\t2024-05-30 15:01:57 +0200\tc3f500eee87859a4a9706ae7f725cf7bed26d8d3\tmogelijke fix voor dns naam\tmain
+Cas Olischläger\t2024-05-30 14:51:16 +0200\tbb194f91bec6f2496c105d75fe8e499d1a78dd6e\tdir aangemaakt in github runner\tmain
+Jeroen S\t2024-05-30 14:45:14 +0200\t598b9f6cceb5a3915cf4c140b5940432b6e386ad\tMerge pull request #3 from ZuydUniversity/azure-setup\tmain
+Cas Olischläger\t2024-05-30 14:44:36 +0200\t7ee24910f040d5c97a6b2d057b625138342166e5\tchore: Configure Azure credentials for Ansible deployment\tmain
+Cas Olischläger\t2024-05-30 14:41:52 +0200\t7b805dbd9cf37a7842cc2d9defcfac2dd4becfb8\tdirectory fix\tmain
+Cas Olischläger\t2024-05-30 14:39:55 +0200\t361f7a062cf002b09d806ab96d810519080b9c25\tpipeline geupdate\tmain
+Cas Olischläger\t2024-05-30 14:37:46 +0200\tdd6f5d4cd309e033aeb6cb85e00acafe4213e6f8\tAnsible playbooks\tmain
+Jeroen S\t2024-05-30 13:06:22 +0200\t709a709dea306a5004eb1183b6d846329bfca322\tMerge pull request #2 from ZuydUniversity/JeroenSiebers04-ansible-setup\tmain
+Cas Olischläger\t2024-05-30 13:05:01 +0200\t7208fc847b2878e06a75fa6be5ed6a8d80a2e67b\tUpdate ansible.yml\tmain
+Cas Olischläger\t2024-05-30 13:01:12 +0200\t3f479a0538559da7faa96385b569b75870c01d83\tUpdate test.yml\tmain
+Cas Olischläger\t2024-05-30 12:57:48 +0200\t8cb2d1ba917d5baa8c55471e7936a079d0a806b6\tUpdate ansible.yml\tmain
+Cas Olischläger\t2024-05-30 12:56:28 +0200\t56c4d06d44e444e18264720049a025835c9b0f3a\tUpdate ansible.yml\tmain
+Cas Olischläger\t2024-05-30 12:48:25 +0200\t7f9c694a781f1779a2303d4651b81b2f6611fa5e\tUpdate ansible.yml\tmain
+Cas Olischläger\t2024-05-30 12:44:18 +0200\t375d6a91f507bf513b9f57723898151362eab0ca\tUpdate ansible.yml\tmain
+Jeroen Siebers\t2024-05-30 12:36:25 +0200\t80cb8d416d801db14572f21810573caebfcf8cbe\tsyntax correction\tmain
+Jeroen Siebers\t2024-05-30 12:26:17 +0200\t4485660f4f1bb0c6a333687e14adfc266903d300\tPlaybook setup\tmain
+Jeroen Siebers\t2024-05-30 12:17:18 +0200\tc757dd3289d858bd22ae1724092e268e64e97ae0\tping test\tmain
+Jeroen S\t2024-05-30 11:44:12 +0200\ta955d4df7488b5379b17aa384d7c3e50ba640311\tCreate ansible.yml\tmain
+Rob Cilissen-Grassére\t2024-04-30 11:59:42 +0200\t9a897f67dada0b84dea694f21f53d345ad685778\tInitial commit\tmain
